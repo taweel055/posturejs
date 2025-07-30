@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProPostureFitness - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-passed {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .test-failed {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .test-warning {
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 3px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+<link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
+<body>
+    <div class="test-container">
+        <h1>🧪 ProPostureFitness Test Suite</h1>
+        
+        <div class="test-section" id="compatibility-test">
+            <h3>1. Browser Compatibility Test</h3>
+            <button onclick="runCompatibilityTest()">Run Compatibility Test</button>
+            <div id="compatibility-results"></div>
+        </div>
+        
+        <div class="test-section" id="config-test">
+            <h3>2. Configuration System Test</h3>
+            <button onclick="runConfigTest()">Test Configuration</button>
+            <div id="config-results"></div>
+        </div>
+        
+        <div class="test-section" id="analyzer-test">
+            <h3>3. Posture Analyzer Test</h3>
+            <button onclick="runAnalyzerTest()">Test Analyzers</button>
+            <div id="analyzer-results"></div>
+        </div>
+        
+        <div class="test-section" id="camera-test">
+            <h3>4. Camera Manager Test</h3>
+            <button onclick="runCameraTest()">Test Camera System</button>
+            <div id="camera-results"></div>
+        </div>
+        
+        <div class="test-section" id="ui-test">
+            <h3>5. UI Manager Test</h3>
+            <button onclick="runUITest()">Test UI System</button>
+            <div id="ui-results"></div>
+        </div>
+        
+        <div class="test-section" id="integration-test">
+            <h3>6. Integration Test</h3>
+            <button onclick="runIntegrationTest()">Test Full Integration</button>
+            <div id="integration-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 Test Log</h3>
+            <button onclick="clearLog()">Clear Log</button>
+            <div id="test-log" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🚀 Launch Full Application</h3>
+            <p>If all tests pass, you can launch the full application:</p>
+            <button onclick="window.open('index.html', '_blank')">Launch ProPostureFitness</button>
+        </div>
+    </div>
+
+    <!-- Load the application scripts for testing -->
+    <script src="js/config.js"></script>
+    <script src="js/mediapipeLoader.js"></script>
+    <script src="js/postureAnalyzer.js"></script>
+    <script src="js/cameraManager.js"></script>
+    <script src="js/uiManager.js"></script>
+
+    <script>
+        // Test utility functions
+        function log(message, type = 'info') {
+            const logElement = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(`[TEST] ${message}`);
+        }
+
+        function setTestResult(sectionId, passed, message) {
+            const section = document.getElementById(sectionId);
+            const resultsDiv = section.querySelector('div:last-child');
+            
+            section.className = 'test-section ' + (passed ? 'test-passed' : 'test-failed');
+            resultsDiv.innerHTML = `<strong>${passed ? '✅ PASSED' : '❌ FAILED'}</strong>: ${message}`;
+            
+            log(`${sectionId}: ${passed ? 'PASSED' : 'FAILED'} - ${message}`, passed ? 'pass' : 'fail');
+        }
+
+        function clearLog() {
+            document.getElementById('test-log').innerHTML = '';
+        }
+
+        // Test functions
+        async function runCompatibilityTest() {
+            log('Starting browser compatibility test...');
+            
+            try {
+                const requirements = {
+                    'WebRTC': () => !!navigator.mediaDevices?.getUserMedia,
+                    'Canvas': () => !!document.createElement('canvas').getContext,
+                    'WebGL': () => !!document.createElement('canvas').getContext('webgl'),
+                    'LocalStorage': () => typeof Storage !== 'undefined',
+                    'ES6 Classes': () => typeof class {} === 'function',
+                    'Promises': () => typeof Promise !== 'undefined',
+                    'Fetch API': () => typeof fetch !== 'undefined'
+                };
+
+                const results = {};
+                let allPassed = true;
+
+                for (const [feature, check] of Object.entries(requirements)) {
+                    try {
+                        results[feature] = check();
+                        if (!results[feature]) {
+                            allPassed = false;
+                        }
+                    } catch (error) {
+                        results[feature] = false;
+                        allPassed = false;
+                    }
+                }
+
+                const message = Object.entries(results)
+                    .map(([feature, supported]) => `${feature}: ${supported ? '✅' : '❌'}`)
+                    .join(', ');
+
+                setTestResult('compatibility-test', allPassed, message);
+                
+            } catch (error) {
+                setTestResult('compatibility-test', false, `Error: ${error.message}`);
+            }
+        }
+
+        async function runConfigTest() {
+            log('Testing configuration system...');
+            
+            try {
+                // Test if config is available
+                if (typeof ProPostureConfig === 'undefined') {
+                    throw new Error('ProPostureConfig not available');
+                }
+
+                // Test basic config operations
+                const originalValue = ProPostureConfig.get('analysis.mode');
+                ProPostureConfig.set('analysis.mode', 'test');
+                const testValue = ProPostureConfig.get('analysis.mode');
+                ProPostureConfig.set('analysis.mode', originalValue);
+
+                if (testValue !== 'test') {
+                    throw new Error('Config set/get failed');
+                }
+
+                // Test camera constraints
+                const constraints = ProPostureConfig.getCameraConstraints();
+                if (!constraints || !constraints.video) {
+                    throw new Error('Camera constraints invalid');
+                }
+
+                // Test MediaPipe config
+                const mpConfig = ProPostureConfig.getMediaPipeConfig();
+                if (!mpConfig || typeof mpConfig.modelComplexity === 'undefined') {
+                    throw new Error('MediaPipe config invalid');
+                }
+
+                setTestResult('config-test', true, 'All configuration tests passed');
+                
+            } catch (error) {
+                setTestResult('config-test', false, error.message);
+            }
+        }
+
+        async function runAnalyzerTest() {
+            log('Testing posture analyzers...');
+            
+            try {
+                // Test analyzer factory
+                if (typeof PostureAnalyzerFactory === 'undefined') {
+                    throw new Error('PostureAnalyzerFactory not available');
+                }
+
+                const supportedModes = PostureAnalyzerFactory.getSupportedModes();
+                if (!Array.isArray(supportedModes) || supportedModes.length === 0) {
+                    throw new Error('No supported analysis modes');
+                }
+
+                // Test basic analyzer
+                const basicAnalyzer = PostureAnalyzerFactory.create('basic');
+                if (!basicAnalyzer || typeof basicAnalyzer.analyzePosture !== 'function') {
+                    throw new Error('Basic analyzer creation failed');
+                }
+
+                // Test advanced analyzer if MediaPipe is available
+                let advancedWorks = true;
+                try {
+                    const advancedAnalyzer = PostureAnalyzerFactory.create('advanced');
+                    if (!advancedAnalyzer) {
+                        advancedWorks = false;
+                    }
+                } catch (e) {
+                    advancedWorks = false;
+                }
+
+                const message = `Supported modes: ${supportedModes.join(', ')}. Advanced: ${advancedWorks ? '✅' : '❌'}`;
+                setTestResult('analyzer-test', true, message);
+                
+            } catch (error) {
+                setTestResult('analyzer-test', false, error.message);
+            }
+        }
+
+        async function runCameraTest() {
+            log('Testing camera system...');
+            
+            try {
+                // Test camera manager creation
+                if (typeof CameraManager === 'undefined') {
+                    throw new Error('CameraManager not available');
+                }
+
+                const cameraManager = new CameraManager();
+                if (!cameraManager || typeof cameraManager.initializeCamera !== 'function') {
+                    throw new Error('CameraManager creation failed');
+                }
+
+                // Test browser support check
+                const hasSupport = cameraManager.checkBrowserSupport();
+                
+                // Test constraints generation
+                const constraints = cameraManager.getOptimalConstraints();
+                if (!constraints || !constraints.video) {
+                    throw new Error('Camera constraints generation failed');
+                }
+
+                const message = `Browser support: ${hasSupport ? '✅' : '❌'}, Constraints: ✅`;
+                setTestResult('camera-test', hasSupport, message);
+                
+            } catch (error) {
+                setTestResult('camera-test', false, error.message);
+            }
+        }
+
+        async function runUITest() {
+            log('Testing UI system...');
+            
+            try {
+                // Test UI manager creation
+                if (typeof UIManager === 'undefined') {
+                    throw new Error('UIManager not available');
+                }
+
+                // Create a minimal DOM for UI testing
+                const testDiv = document.createElement('div');
+                testDiv.innerHTML = `
+                    <button id="startBtn">Start</button>
+                    <button id="stopBtn">Stop</button>
+                    <div id="fpsDisplay">0</div>
+                    <div id="scoreDisplay">--</div>
+                `;
+                document.body.appendChild(testDiv);
+
+                const uiManager = new UIManager();
+                if (!uiManager || typeof uiManager.updateStatusDisplay !== 'function') {
+                    throw new Error('UIManager creation failed');
+                }
+
+                // Test status update
+                uiManager.updateStatusDisplay(30, 'Good');
+                uiManager.updateScoreDisplay(85);
+
+                // Cleanup
+                document.body.removeChild(testDiv);
+
+                setTestResult('ui-test', true, 'UI system initialized and functional');
+                
+            } catch (error) {
+                setTestResult('ui-test', false, error.message);
+            }
+        }
+
+        async function runIntegrationTest() {
+            log('Testing full system integration...');
+            
+            try {
+                // Test if all components can work together
+                const config = window.ProPostureConfig;
+                const analyzer = PostureAnalyzerFactory.create('basic');
+                const cameraManager = new CameraManager();
+
+                // Test configuration integration
+                const mode = config.get('analysis.mode');
+                const constraints = config.getCameraConstraints();
+                const mpConfig = config.getMediaPipeConfig();
+
+                // Test analyzer with mock data
+                const mockImageData = new ImageData(100, 100);
+                const result = await analyzer.analyzePosture(mockImageData);
+
+                if (!result || typeof result.score === 'undefined') {
+                    throw new Error('Analyzer integration failed');
+                }
+
+                // Test performance metrics
+                const metrics = analyzer.getPerformanceMetrics();
+                if (!metrics || typeof metrics.fps === 'undefined') {
+                    throw new Error('Performance metrics integration failed');
+                }
+
+                setTestResult('integration-test', true, 'All components integrated successfully');
+                
+            } catch (error) {
+                setTestResult('integration-test', false, error.message);
+            }
+        }
+
+        // Auto-run basic tests on page load
+        window.addEventListener('load', () => {
+            log('ProPostureFitness Test Suite loaded');
+            setTimeout(() => {
+                runCompatibilityTest();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

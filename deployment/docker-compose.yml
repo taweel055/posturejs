@@ -1,0 +1,164 @@
+version: '3.8'
+
+services:
+  # ProPostureFitness Backend API
+  proposturefitness-backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - FRONTEND_URL=http://localhost:3000
+      - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+      - DATABASE_PATH=/app/data/proposturefitness.db
+    volumes:
+      - backend-data:/app/data
+      - backend-logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.proposturefitness-api.rule=Host(`api.proposturefitness.local`)"
+      - "traefik.http.routers.proposturefitness-api.entrypoints=web"
+      - "traefik.http.services.proposturefitness-api.loadbalancer.server.port=5000"
+    networks:
+      - proposturefitness-network
+
+  # ProPostureFitness Frontend Application
+  proposturefitness-app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=http://localhost:5000/api
+      - VITE_WS_URL=http://localhost:5000
+    volumes:
+      - ../dist:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    depends_on:
+      - proposturefitness-backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.proposturefitness.rule=Host(`proposturefitness.local`)"
+      - "traefik.http.routers.proposturefitness.entrypoints=web"
+      - "traefik.http.services.proposturefitness.loadbalancer.server.port=80"
+    networks:
+      - proposturefitness-network
+
+  # Development profiles for easier development
+  proposturefitness-backend-dev:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "5001:5000"
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - FRONTEND_URL=http://localhost:3001
+      - JWT_SECRET=dev-jwt-secret-key
+    volumes:
+      - ../backend:/app
+      - backend-data-dev:/app/data
+      - /app/node_modules
+    restart: "no"
+    profiles:
+      - dev
+    networks:
+      - proposturefitness-network
+
+  proposturefitness-app-dev:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:5001/api
+      - VITE_WS_URL=http://localhost:5001
+    volumes:
+      - ..:/app
+      - /app/node_modules
+    restart: "no"
+    depends_on:
+      - proposturefitness-backend-dev
+    profiles:
+      - dev
+    networks:
+      - proposturefitness-network
+
+  # Reverse proxy (optional)
+  traefik:
+    image: traefik:v3.0
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    profiles:
+      - proxy
+    networks:
+      - proposturefitness-network
+
+  # Database backup service (optional)
+  proposturefitness-backup:
+    image: alpine:latest
+    command: |
+      sh -c "
+        apk add --no-cache sqlite &&
+        while true; do
+          sleep 86400 &&
+          sqlite3 /data/proposturefitness.db '.backup /backup/proposturefitness-$(date +%Y%m%d).db' &&
+          find /backup -name '*.db' -mtime +7 -delete
+        done
+      "
+    volumes:
+      - backend-data:/data:ro
+      - backup-data:/backup
+    profiles:
+      - backup
+    networks:
+      - proposturefitness-network
+
+# Volumes for persistent data
+volumes:
+  backend-data:
+    driver: local
+  backend-logs:
+    driver: local
+  backend-data-dev:
+    driver: local
+  backup-data:
+    driver: local
+
+# Network for service communication
+networks:
+  proposturefitness-network:
+    driver: bridge

@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # ProPostureFitness Production Application
+  proposturefitness-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: proposturefitness-prod
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+      - PROPOSTURE_API_URL=https://api.proposturefitness.com
+      - PROPOSTURE_CDN_URL=https://cdn.proposturefitness.com
+    volumes:
+      - ./public/icons:/usr/share/nginx/html/icons:ro
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.proposture.rule=Host(`proposturefitness.com`)"
+      - "traefik.http.routers.proposture.tls=true"
+      - "traefik.http.routers.proposture.tls.certresolver=letsencrypt"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Development Environment
+  proposturefitness-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: proposturefitness-dev
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+      - PROPOSTURE_DEV_MODE=true
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+    profiles:
+      - dev
+
+  # Reverse Proxy (Production)
+  traefik:
+    image: traefik:v3.0
+    container_name: proposture-proxy
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.email=admin@proposturefitness.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
+    profiles:
+      - production
+    restart: unless-stopped
+
+  # Monitoring & Analytics
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: proposture-metrics
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    profiles:
+      - monitoring
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: proposture-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=secure_password_here
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    profiles:
+      - monitoring
+    restart: unless-stopped
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  default:
+    name: proposture-network

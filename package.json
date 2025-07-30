@@ -1,0 +1,73 @@
+{
+  "name": "proposturefitness-js",
+  "version": "1.0.0",
+  "description": "Professional Posture Analysis System - JavaScript Web Application",
+  "type": "module",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite --port 3000 --open",
+    "build": "vite build",
+    "preview": "vite preview --port 3000",
+    "serve": "http-server dist -p 3000 -c-1",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "lint": "eslint . --ext .js,.html --fix",
+    "format": "prettier --write .",
+    "audit-fix": "npm audit fix --force",
+    "clean": "rm -rf dist node_modules package-lock.json && npm install",
+    "typecheck": "tsc --noEmit",
+    "start": "npm run dev"
+  },
+  "keywords": [
+    "posture",
+    "fitness",
+    "mediapipe",
+    "computer-vision",
+    "health",
+    "webrtc",
+    "pose-detection",
+    "realtime-analysis"
+  ],
+  "author": "ProPostureFitness Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/proposturefitness/js-edition"
+  },
+  "bugs": {
+    "url": "https://github.com/proposturefitness/js-edition/issues"
+  },
+  "homepage": "https://github.com/proposturefitness/js-edition#readme",
+  "dependencies": {
+    "@mediapipe/camera_utils": "~0.3.1640029074",
+    "@mediapipe/drawing_utils": "~0.3.1620248257",
+    "@mediapipe/pose": "~0.5.1675469404"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/jest": "^29.5.14",
+    "@vitest/ui": "^3.2.4",
+    "eslint": "^9.15.0",
+    "globals": "^15.12.0",
+    "happy-dom": "^15.11.6",
+    "http-server": "^14.1.1",
+    "jsdom": "^25.0.1",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.1",
+    "vite-plugin-pwa": "^0.21.1",
+    "vitest": "^3.2.4",
+    "workbox-window": "^7.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions"
+  ]
+}
