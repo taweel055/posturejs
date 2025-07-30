@@ -267,14 +267,10 @@ class ConfigManager {
     /**
      * Log performance metrics
      */
-    logPerformance(operation, duration) {
+    logPerformance(operation, _duration) {
         if (!this.get('system.performanceLogging')) {return;}
         
         this.performanceMetrics[operation] = (this.performanceMetrics[operation] || 0) + 1;
-        
-        if (this.get('system.debugMode')) {
-            console.log(`Config ${operation}: ${duration.toFixed(2)}ms`);
-        }
     }
     
     /**

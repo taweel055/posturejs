@@ -111,7 +111,7 @@ class MetricsManager {
     });
     
     document.getElementById('graphTimeRange')?.addEventListener('change', (e) => {
-      this.changeTimeRange(parseInt(e.target.value));
+      this.changeTimeRange(parseInt(e.target.value, 10));
     });
 
     // Listen for analyzer updates
@@ -166,7 +166,7 @@ class MetricsManager {
 
   setupGraphCanvas() {
     const canvas = document.getElementById('postureGraph');
-    if (!canvas) return;
+    if (!canvas) {return;}
 
     this.graphCtx = canvas.getContext('2d');
     
@@ -177,7 +177,7 @@ class MetricsManager {
 
   setupGraphInteractivity() {
     const canvas = document.getElementById('postureGraph');
-    if (!canvas) return;
+    if (!canvas) {return;}
 
     // Graph interaction state
     this.graphInteraction = {
@@ -224,11 +224,11 @@ class MetricsManager {
 
   setupLegendInteractivity() {
     const legend = document.querySelector('.graph-legend');
-    if (!legend) return;
+    if (!legend) {return;}
 
     legend.addEventListener('click', (e) => {
       const legendItem = e.target.closest('.legend-item');
-      if (!legendItem) return;
+      if (!legendItem) {return;}
 
       const seriesName = this.getLegendSeriesName(legendItem);
       this.toggleSeries(seriesName);
@@ -293,7 +293,7 @@ class MetricsManager {
 
   findNearestDataPoint(mouseX, mouseY, canvasWidth, canvasHeight) {
     const data = this.metricsHistory;
-    if (data.length < 2) return null;
+    if (data.length < 2) {return null;}
 
     let nearest = null;
     let minDistance = Infinity;
@@ -400,7 +400,7 @@ class MetricsManager {
   }
 
   initializeGraph() {
-    if (!this.graphCtx) return;
+    if (!this.graphCtx) {return;}
 
     const canvas = this.graphCtx.canvas;
     const width = canvas.width;
@@ -466,7 +466,7 @@ class MetricsManager {
   }
 
   updateMetrics(metrics) {
-    if (!metrics) return;
+    if (!metrics) {return;}
 
     // Update current metrics
     Object.assign(this.currentMetrics, metrics);
@@ -523,8 +523,8 @@ class MetricsManager {
       
       // Update color based on score
       let color = '#10b981'; // green
-      if (score < 50) color = '#ef4444'; // red
-      else if (score < 70) color = '#f59e0b'; // yellow
+      if (score < 50) {color = '#ef4444';} // red
+      else if (score < 70) {color = '#f59e0b';} // yellow
       
       scoreCircle.style.background = `conic-gradient(${color} 0deg, ${color} ${score * 3.6}deg, var(--border-color) ${score * 3.6}deg)`;
     }
@@ -535,7 +535,7 @@ class MetricsManager {
 
   updateTrend(currentScore) {
     const history = this.metricsHistory;
-    if (history.length < 2) return;
+    if (history.length < 2) {return;}
 
     const previousScore = history[history.length - 2]?.postureScore || 0;
     const change = currentScore - previousScore;
@@ -580,9 +580,9 @@ class MetricsManager {
         
         // Update color based on value
         let color = '#2563eb'; // blue
-        if (values[key] > 80) color = '#10b981'; // green
-        else if (values[key] < 50) color = '#ef4444'; // red
-        else if (values[key] < 70) color = '#f59e0b'; // yellow
+        if (values[key] > 80) {color = '#10b981';} // green
+        else if (values[key] < 50) {color = '#ef4444';} // red
+        else if (values[key] < 70) {color = '#f59e0b';} // yellow
         
         bar.style.backgroundColor = color;
       }
@@ -664,10 +664,10 @@ class MetricsManager {
 
   updateFpsGraph() {
     const fpsGraph = document.getElementById('fpsGraph');
-    if (!fpsGraph) return;
+    if (!fpsGraph) {return;}
 
     const canvas = fpsGraph.querySelector('canvas');
-    if (!canvas) return;
+    if (!canvas) {return;}
 
     const ctx = canvas.getContext('2d');
     const width = canvas.width;
@@ -677,7 +677,7 @@ class MetricsManager {
     ctx.clearRect(0, 0, width, height);
 
     const history = this.performanceData.fpsHistory;
-    if (history.length < 2) return;
+    if (history.length < 2) {return;}
 
     // Draw FPS line
     ctx.strokeStyle = '#10b981';
@@ -722,7 +722,7 @@ class MetricsManager {
   }
 
   updateSessionTimer() {
-    if (!this.sessionStartTime) return;
+    if (!this.sessionStartTime) {return;}
 
     const now = Date.now();
     const elapsed = now - this.sessionStartTime;
@@ -740,7 +740,7 @@ class MetricsManager {
   }
 
   calculatePosturePercentage() {
-    if (this.metricsHistory.length === 0) return;
+    if (this.metricsHistory.length === 0) {return;}
 
     const goodPostureFrames = this.metricsHistory.filter(m => m.postureScore >= 70).length;
     const totalFrames = this.metricsHistory.length;
@@ -777,8 +777,8 @@ class MetricsManager {
 
       // Update color
       let color = '#10b981'; // green
-      if (percentage < 50) color = '#ef4444'; // red
-      else if (percentage < 70) color = '#f59e0b'; // yellow
+      if (percentage < 50) {color = '#ef4444';} // red
+      else if (percentage < 70) {color = '#f59e0b';} // yellow
       
       ringFill.setAttribute('stroke', color);
     }
@@ -800,7 +800,7 @@ class MetricsManager {
   }
 
   updateGraph() {
-    if (!this.graphCtx || this.metricsHistory.length < 2) return;
+    if (!this.graphCtx || this.metricsHistory.length < 2) {return;}
 
     const canvas = this.graphCtx.canvas;
     const width = canvas.width;
@@ -834,7 +834,7 @@ class MetricsManager {
 
   drawDataLine(metric, color, width, height) {
     const data = this.metricsHistory;
-    if (data.length < 2) return;
+    if (data.length < 2) {return;}
 
     this.graphCtx.strokeStyle = color;
     this.graphCtx.lineWidth = 2;
@@ -902,7 +902,7 @@ class MetricsManager {
 
   analyzeInsights() {
     const now = Date.now();
-    if (now - this.insights.lastAnalysis < this.insights.analysisInterval) return;
+    if (now - this.insights.lastAnalysis < this.insights.analysisInterval) {return;}
 
     this.insights.lastAnalysis = now;
     this.generateInsights();
@@ -1052,7 +1052,6 @@ class MetricsManager {
       this.updateSessionButtons();
       this.updateSessionStatus('Active');
 
-      console.log('Session started:', this.sessionId);
     } catch (error) {
       console.error('Failed to start session:', error);
       alert('Failed to start session. Starting local session only.');
@@ -1098,7 +1097,6 @@ class MetricsManager {
       // Show session summary
       this.showSessionSummary();
 
-      console.log('Session ended:', this.sessionId);
       this.sessionId = null;
     } catch (error) {
       console.error('Failed to end session:', error);
@@ -1115,9 +1113,9 @@ class MetricsManager {
     const pauseBtn = document.getElementById('pauseSession');
     const endBtn = document.getElementById('endSession');
 
-    if (startBtn) startBtn.disabled = this.isSessionActive;
-    if (pauseBtn) pauseBtn.disabled = !this.isSessionActive;
-    if (endBtn) endBtn.disabled = !this.isSessionActive;
+    if (startBtn) {startBtn.disabled = this.isSessionActive;}
+    if (pauseBtn) {pauseBtn.disabled = !this.isSessionActive;}
+    if (endBtn) {endBtn.disabled = !this.isSessionActive;}
   }
 
   updateSessionStatus(status) {
@@ -1182,7 +1180,7 @@ Alerts: ${summary.alertCount}
   }
 
   async sendMetricsToBackend(metrics) {
-    if (!this.api || !this.api.isAuthenticated() || !this.sessionId) return;
+    if (!this.api || !this.api.isAuthenticated() || !this.sessionId) {return;}
 
     try {
       await this.api.addPostureData({
@@ -1279,7 +1277,7 @@ Alerts: ${summary.alertCount}
   }
 
   async exportData() {
-    const data = {
+    const _data = {
       session: {
         id: this.sessionId,
         startTime: this.sessionStartTime,
@@ -1304,7 +1302,7 @@ Alerts: ${summary.alertCount}
   }
 
   convertToCSV(data) {
-    if (data.length === 0) return '';
+    if (data.length === 0) {return '';}
 
     const headers = Object.keys(data[0]);
     const csvContent = [

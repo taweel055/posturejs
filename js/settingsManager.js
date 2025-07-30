@@ -998,7 +998,7 @@ class SettingsManager {
   validateSetting(settingPath, value) {
     const rule = this.validationRules[settingPath];
     
-    if (!rule) return true;
+    if (!rule) {return true;}
     
     if (Array.isArray(rule)) {
       return rule.includes(value);
@@ -1181,7 +1181,7 @@ class SettingsManager {
 
   // Utility methods
   validateAllSettings() {
-    for (const [path, rule] of Object.entries(this.validationRules)) {
+    for (const [path, _rule] of Object.entries(this.validationRules)) {
       const value = this.getNestedValue(this.settings, path);
       if (!this.validateSetting(path, value)) {
         return false;
@@ -1233,7 +1233,7 @@ class SettingsManager {
       this.alertsManager.showVisualAlert({
         id: 'settings_error',
         level: 'error',
-        message: message,
+        message,
         timestamp: Date.now(),
         actions: [{ text: 'OK', action: 'dismiss' }]
       });
@@ -1267,7 +1267,7 @@ class SettingsManager {
             this.renderTabContent();
             this.unsavedChanges = true;
             this.updateSettingsStatus('Settings imported');
-          } catch (error) {
+          } catch (_error) {
             this.showSettingsError('Invalid settings file');
           }
         };
@@ -1322,7 +1322,6 @@ class SettingsManager {
   // Additional utility methods
   refreshCameraList() {
     // This would be implemented to refresh the camera device list
-    console.log('Refreshing camera list...');
     // Integration with camera manager would go here
   }
 

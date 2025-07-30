@@ -66,8 +66,6 @@ class ProPostureFitnessApp {
      */
     async initialize() {
         try {
-            console.log(`🚀 Initializing ProPostureFitness v${this.version}`);
-            console.log('=' * 60);
             
             // Check browser compatibility
             if (!this.checkCompatibility()) {
@@ -82,22 +80,18 @@ class ProPostureFitnessApp {
             this.authManager.setAuthStateChangeCallback((isAuthenticated, user) => {
                 this.handleAuthStateChange(isAuthenticated, user);
             });
-            console.log('✅ Auth Manager initialized');
             
             // Initialize header manager
             this.headerManager = new HeaderManager(this.apiService, this.authManager);
-            console.log('✅ Header Manager initialized');
             
             // Initialize UI manager
             this.uiManager = new UIManager();
-            console.log('✅ UI Manager initialized');
             
             // Setup event listeners
             this.setupEventListeners();
             
             // Initialize camera manager
             this.cameraManager = new CameraManager();
-            console.log('✅ Camera Manager initialized');
             
             // Start MediaPipe preloading for better performance
             this.preloadMediaPipe();
@@ -107,33 +101,26 @@ class ProPostureFitnessApp {
             
             // Initialize video controls manager
             this.videoControlsManager = new VideoControlsManager(this.cameraManager, this.postureAnalyzer);
-            console.log('✅ Video Controls Manager initialized');
             
             // Initialize metrics manager
             this.metricsManager = new MetricsManager(this.apiService, this.postureAnalyzer);
-            console.log('✅ Metrics Manager initialized');
             
             // Initialize alerts manager
             this.alertsManager = new AlertsManager(this.apiService, this.metricsManager);
-            console.log('✅ Alerts Manager initialized');
             
             // Initialize skeleton overlay manager
             this.skeletonOverlayManager = new SkeletonOverlayManager(this.postureAnalyzer, this.videoControlsManager);
-            console.log('✅ Skeleton Overlay Manager initialized');
             
             // Initialize gamification manager
             this.gamificationManager = new GamificationManager(this.apiService, this.metricsManager, this.alertsManager);
-            console.log('✅ Gamification Manager initialized');
             
             // Initialize exercise recommendation manager
             this.exerciseRecommendationManager = new ExerciseRecommendationManager(this.postureAnalyzer, this.alertsManager, this.metricsManager);
             window.exerciseRecommendationManager = this.exerciseRecommendationManager; // Make globally available
-            console.log('✅ Exercise Recommendation Manager initialized');
             
             // Initialize settings manager
             this.settingsManager = new SettingsManager(this.apiService, this.videoControlsManager, this.alertsManager);
             window.settingsManager = this.settingsManager; // Make globally available
-            console.log('✅ Settings Manager initialized');
             
             // Setup performance monitoring
             this.setupPerformanceMonitoring();
@@ -145,7 +132,6 @@ class ProPostureFitnessApp {
             this.loadSavedState();
             
             this.initialized = true;
-            console.log('✅ ProPostureFitness initialized successfully');
             
             // Dispatch initialization event
             window.dispatchEvent(new CustomEvent('app-initialized', {
@@ -163,7 +149,6 @@ class ProPostureFitnessApp {
      */
     async preloadMediaPipe() {
         try {
-            console.log('🚀 Starting MediaPipe preloading...');
             
             // Get the preferred analysis mode
             const preferredMode = this.analysisMode || 'advanced';
@@ -173,7 +158,6 @@ class ProPostureFitnessApp {
                 const successful = results.filter(r => r.status === 'success').length;
                 const total = results.length;
                 
-                console.log(`📦 MediaPipe preloading: ${successful}/${total} modules loaded`);
                 
                 // Dispatch preload completion event
                 window.dispatchEvent(new CustomEvent('mediapipe-preloaded', {
@@ -227,7 +211,6 @@ class ProPostureFitnessApp {
             }
         }
         
-        console.log('🔍 Browser compatibility check:', results);
         
         if (!allSupported) {
             this.showCompatibilityError(results);
@@ -282,7 +265,6 @@ class ProPostureFitnessApp {
         const config = window.ProPostureConfig;
         this.analysisMode = config.get('analysis.mode');
         
-        console.log('⚙️ Configuration loaded');
     }
     
     /**
@@ -291,13 +273,11 @@ class ProPostureFitnessApp {
     initializePostureAnalyzer() {
         try {
             this.postureAnalyzer = PostureAnalyzerFactory.create(this.analysisMode);
-            console.log(`✅ Posture Analyzer initialized (${this.analysisMode} mode)`);
         } catch (error) {
             console.error('Posture analyzer initialization failed:', error);
             // Fallback to basic mode
             this.analysisMode = 'basic';
             this.postureAnalyzer = PostureAnalyzerFactory.create('basic');
-            console.log('⚠️ Falling back to basic mode');
         }
     }
     
@@ -329,7 +309,6 @@ class ProPostureFitnessApp {
         window.addEventListener('error', (e) => this.handleGlobalError(e));
         window.addEventListener('unhandledrejection', (e) => this.handleUnhandledRejection(e));
         
-        console.log('✅ Event listeners setup complete');
     }
     
     /**
@@ -353,7 +332,6 @@ class ProPostureFitnessApp {
             this.logPerformanceMetrics();
         }, 30000); // Every 30 seconds
         
-        console.log('✅ Performance monitoring setup complete');
     }
     
     /**
@@ -363,7 +341,6 @@ class ProPostureFitnessApp {
         // Set up global error boundaries
         this.setupErrorBoundaries();
         
-        console.log('✅ Error handling setup complete');
     }
     
     /**
@@ -376,7 +353,6 @@ class ProPostureFitnessApp {
         }
         
         try {
-            console.log(`🎯 Starting analysis in ${mode} mode`);
             
             // Check authentication and start session
             if (!this.apiService.isAuthenticated()) {
@@ -412,7 +388,6 @@ class ProPostureFitnessApp {
             this.performanceMonitor.startTime = performance.now();
             this.performanceMonitor.frameCount = 0;
             
-            console.log('✅ Analysis started successfully');
             return true;
             
         } catch (error) {
@@ -431,7 +406,6 @@ class ProPostureFitnessApp {
             return;
         }
         
-        console.log('🛑 Stopping analysis');
         
         // Stop frame processing
         this.stopFrameProcessing();
@@ -446,7 +420,6 @@ class ProPostureFitnessApp {
         // Log session summary
         this.logSessionSummary();
         
-        console.log('✅ Analysis stopped');
     }
     
     /**
@@ -462,7 +435,6 @@ class ProPostureFitnessApp {
             this.processFrame(imageData);
         });
         
-        console.log('🔄 Frame processing started');
     }
     
     /**
@@ -474,7 +446,6 @@ class ProPostureFitnessApp {
         // Remove frame callback
         this.cameraManager.removeFrameCallback(this.processFrame.bind(this));
         
-        console.log('⏹️ Frame processing stopped');
     }
     
     /**
@@ -526,7 +497,7 @@ class ProPostureFitnessApp {
                 // Update video controls manager
                 if (this.videoControlsManager) {
                     this.videoControlsManager.updateFromAnalyzer({
-                        fps: fps,
+                        fps,
                         score: result.score,
                         status: result.score >= 70 ? 'Good' : result.score >= 50 ? 'Fair' : 'Poor'
                     });
@@ -592,7 +563,6 @@ class ProPostureFitnessApp {
             
             if (screenshotUrl) {
                 // Log screenshot
-                console.log('📸 Screenshot taken');
                 
                 // Dispatch screenshot event
                 window.dispatchEvent(new CustomEvent('screenshot-taken', {
@@ -611,7 +581,7 @@ class ProPostureFitnessApp {
     /**
      * Auto-screenshot for good posture
      */
-    autoScreenshot(score) {
+    autoScreenshot(_score) {
         // Throttle auto-screenshots (max 1 per minute)
         const now = Date.now();
         if (this.lastAutoScreenshot && (now - this.lastAutoScreenshot) < 60000) {
@@ -621,7 +591,6 @@ class ProPostureFitnessApp {
         this.lastAutoScreenshot = now;
         this.takeScreenshot();
         
-        console.log(`📸 Auto-screenshot for excellent posture (${score.toFixed(0)})`);
     }
     
     /**
@@ -631,7 +600,6 @@ class ProPostureFitnessApp {
         if (mode === this.analysisMode) {return;}
         
         try {
-            console.log(`🔄 Switching to ${mode} mode`);
             
             // Stop current analysis if running
             const wasRunning = this.isAnalyzing;
@@ -651,7 +619,6 @@ class ProPostureFitnessApp {
                 await this.startAnalysis(mode);
             }
             
-            console.log(`✅ Switched to ${mode} mode`);
             
         } catch (error) {
             console.error(`❌ Failed to switch to ${mode} mode:`, error);
@@ -665,7 +632,6 @@ class ProPostureFitnessApp {
      * Handle camera ready
      */
     handleCameraReady() {
-        console.log('📷 Camera ready for analysis');
     }
     
     /**
@@ -689,7 +655,6 @@ class ProPostureFitnessApp {
     handleConfigChange(detail) {
         const { path, value } = detail;
         
-        console.log(`⚙️ Config changed: ${path} = ${value}`);
         
         // Handle specific configuration changes
         if (path === 'analysis.mode') {
@@ -719,7 +684,6 @@ class ProPostureFitnessApp {
             window.gc();
         }
         
-        console.log('🧹 Memory optimization performed');
     }
     
     /**
@@ -749,7 +713,6 @@ class ProPostureFitnessApp {
         this.stopFrameProcessing();
         this.cameraManager?.pause();
         
-        console.log('⏸️ Analysis paused');
     }
     
     /**
@@ -762,7 +725,6 @@ class ProPostureFitnessApp {
         this.cameraManager?.resume();
         this.startFrameProcessing();
         
-        console.log('▶️ Analysis resumed');
     }
     
     /**
@@ -953,7 +915,7 @@ class ProPostureFitnessApp {
     logPerformanceMetrics() {
         if (!this.isAnalyzing) {return;}
         
-        const metrics = {
+        const _metrics = {
             fps: this.performanceMonitor.currentFps,
             frameCount: this.performanceMonitor.frameCount,
             avgProcessingTime: this.getAverageProcessingTime(),
@@ -961,7 +923,6 @@ class ProPostureFitnessApp {
             uptime: (performance.now() - this.performanceMonitor.startTime) / 1000
         };
         
-        console.log('📊 Performance metrics:', metrics);
     }
     
     /**
@@ -980,15 +941,9 @@ class ProPostureFitnessApp {
      */
     logSessionSummary() {
         const totalTime = (performance.now() - this.performanceMonitor.startTime) / 1000;
-        const avgFps = this.performanceMonitor.frameCount / totalTime;
-        const avgProcessingTime = this.getAverageProcessingTime();
+        const _avgFps = this.performanceMonitor.frameCount / totalTime;
+        const _avgProcessingTime = this.getAverageProcessingTime();
         
-        console.log('📊 Session Summary:');
-        console.log(`   Duration: ${totalTime.toFixed(1)}s`);
-        console.log(`   Frames processed: ${this.performanceMonitor.frameCount}`);
-        console.log(`   Average FPS: ${avgFps.toFixed(1)}`);
-        console.log(`   Average processing time: ${avgProcessingTime.toFixed(2)}ms`);
-        console.log(`   Errors: ${this.errorCount}`);
     }
     
     /**
@@ -1024,7 +979,6 @@ class ProPostureFitnessApp {
                     this.analysisMode = state.analysisMode;
                 }
                 
-                console.log('✅ Saved state loaded');
             }
         } catch (error) {
             console.warn('Failed to load saved state:', error);
@@ -1050,7 +1004,6 @@ class ProPostureFitnessApp {
      * Cleanup resources
      */
     cleanup() {
-        console.log('🧹 Cleaning up application resources');
         
         // Stop analysis
         if (this.isAnalyzing) {
@@ -1064,7 +1017,6 @@ class ProPostureFitnessApp {
         // Clear intervals and timeouts
         // (This would be more comprehensive in a real implementation)
         
-        console.log('✅ Cleanup complete');
     }
 
     // Backend Integration Methods
@@ -1072,11 +1024,9 @@ class ProPostureFitnessApp {
     /**
      * Handle authentication state change
      */
-    handleAuthStateChange(isAuthenticated, user) {
-        console.log(`🔐 Auth state changed: ${isAuthenticated ? 'logged in' : 'logged out'}`);
+    handleAuthStateChange(isAuthenticated, _user) {
         
         if (isAuthenticated) {
-            console.log(`👤 User: ${user.firstName || user.username}`);
             // Load user preferences and data
             this.loadUserData();
         } else {
@@ -1090,12 +1040,11 @@ class ProPostureFitnessApp {
      */
     async loadUserData() {
         try {
-            const [profile, stats] = await Promise.all([
+            const [profile, _stats] = await Promise.all([
                 this.apiService.getProfile(),
                 this.apiService.getUserStats()
             ]);
 
-            console.log('✅ User data loaded:', { profile: profile.user, stats });
             
             // Apply user preferences to configuration
             if (profile.user.preferences) {
@@ -1118,7 +1067,6 @@ class ProPostureFitnessApp {
             }
         });
 
-        console.log('✅ User preferences applied');
     }
 
     /**
@@ -1134,7 +1082,6 @@ class ProPostureFitnessApp {
             const response = await this.apiService.createPostureSession(sessionData);
             this.currentSession = response.session;
             
-            console.log('✅ Posture session created:', this.currentSession.id);
 
             // Sync with metrics manager
             if (this.metricsManager) {
@@ -1175,7 +1122,7 @@ class ProPostureFitnessApp {
      * End current posture session
      */
     async endPostureSession() {
-        if (!this.currentSession) return;
+        if (!this.currentSession) {return;}
 
         try {
             // Sync with metrics manager first
@@ -1195,7 +1142,6 @@ class ProPostureFitnessApp {
                 };
 
                 await this.apiService.updatePostureSession(this.currentSession.id, sessionUpdate);
-                console.log('✅ Posture session ended:', this.currentSession.id);
 
                 // Stop WebSocket streaming
                 if (this.apiService.socket) {

@@ -92,7 +92,6 @@ class UIManager {
             }
         }
         
-        console.log('✅ UI elements initialized');
     }
     
     /**
@@ -139,7 +138,6 @@ class UIManager {
         window.addEventListener('beforeunload', () => this.handlePageUnload());
         window.addEventListener('resize', () => this.handleResize());
         
-        console.log('✅ Event listeners setup complete');
     }
     
     /**
@@ -199,7 +197,6 @@ class UIManager {
         // Session duration update
         this.startSessionTimer();
         
-        console.log('✅ Animations initialized');
     }
     
     /**
@@ -298,7 +295,6 @@ class UIManager {
         // Dispatch stop event
         window.dispatchEvent(new CustomEvent('ui-stop-analysis'));
         
-        console.log('🛑 Analysis stopped');
     }
     
     /**
@@ -357,7 +353,6 @@ class UIManager {
             detail: { mode }
         }));
         
-        console.log(`🔄 Analysis mode changed to: ${mode}`);
     }
     
     /**
@@ -915,7 +910,6 @@ class UIManager {
             cancelAnimationFrame(this.animationFrameId);
         }
         
-        console.log('🧹 UI Manager destroyed');
     }
 }
 

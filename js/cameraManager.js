@@ -44,7 +44,6 @@ class CameraManager {
         const startTime = performance.now();
         
         try {
-            console.log('📷 Initializing camera system...');
             
             // Check browser compatibility
             if (!this.checkBrowserSupport()) {
@@ -53,7 +52,6 @@ class CameraManager {
             
             // Get optimal camera constraints
             const constraints = this.getOptimalConstraints();
-            console.log('📋 Camera constraints:', constraints);
             
             // Request camera access with retry logic
             this.stream = await this.requestCameraWithRetry(constraints);
@@ -75,8 +73,6 @@ class CameraManager {
             
             this.performanceMetrics.initTime = performance.now() - startTime;
             
-            console.log(`✅ Camera initialized successfully in ${this.performanceMetrics.initTime.toFixed(2)}ms`);
-            console.log(`📊 Resolution: ${this.performanceMetrics.resolution.width}x${this.performanceMetrics.resolution.height}`);
             
             // Dispatch initialization event
             this.dispatchEvent('camera-initialized', {
@@ -113,7 +109,7 @@ class CameraManager {
         }
         
         // Check for advanced features
-        const advanced = {
+        const _advanced = {
             webgl: !!document.createElement('canvas').getContext('webgl'),
             webgl2: !!document.createElement('canvas').getContext('webgl2'),
             offscreenCanvas: typeof OffscreenCanvas !== 'undefined',
@@ -121,7 +117,6 @@ class CameraManager {
             faceDetection: 'FaceDetector' in window
         };
         
-        console.log('🔍 Browser capabilities:', advanced);
         return true;
     }
     
@@ -201,7 +196,6 @@ class CameraManager {
      */
     async requestCameraWithRetry(constraints, attempt = 1) {
         try {
-            console.log(`📞 Requesting camera access (attempt ${attempt}/${this.maxRetries})...`);
             
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
             
@@ -213,11 +207,9 @@ class CameraManager {
             
             // Log track capabilities
             const track = videoTracks[0];
-            const capabilities = track.getCapabilities ? track.getCapabilities() : {};
-            const settings = track.getSettings ? track.getSettings() : {};
+            const _capabilities = track.getCapabilities ? track.getCapabilities() : {};
+            const _settings = track.getSettings ? track.getSettings() : {};
             
-            console.log('📹 Video track capabilities:', capabilities);
-            console.log('⚙️ Current settings:', settings);
             
             return stream;
             
@@ -504,7 +496,6 @@ class CameraManager {
             window.gc();
         }
         
-        console.log('🧹 Memory optimization performed');
     }
     
     /**
@@ -573,7 +564,6 @@ class CameraManager {
         try {
             this.stop();
             await this.initializeCamera();
-            console.log('✅ Camera reinitialized successfully');
         } catch (error) {
             console.error('❌ Camera reinitialization failed:', error);
             this.handleCameraError(error);
@@ -640,7 +630,6 @@ class CameraManager {
             cancelAnimationFrame(this.animationFrameId);
             this.animationFrameId = null;
         }
-        console.log('⏸️ Camera streaming paused');
     }
     
     /**
@@ -650,7 +639,6 @@ class CameraManager {
         if (this.isInitialized && !this.isStreaming) {
             this.isStreaming = true;
             this.startFrameProcessing();
-            console.log('▶️ Camera streaming resumed');
         }
     }
     
@@ -680,7 +668,6 @@ class CameraManager {
      */
     handleNetworkChange() {
         const connection = navigator.connection;
-        console.log('🌐 Network changed:', connection.effectiveType, connection.downlink);
         
         // Adjust quality based on network
         if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
@@ -709,7 +696,6 @@ class CameraManager {
             link.click();
             document.body.removeChild(link);
             
-            console.log('📸 Screenshot saved');
             return link.href;
             
         } catch (error) {
@@ -729,7 +715,6 @@ class CameraManager {
      * Stop camera and cleanup
      */
     stop() {
-        console.log('🛑 Stopping camera...');
         
         this.isStreaming = false;
         this.isInitialized = false;
@@ -759,7 +744,6 @@ class CameraManager {
         // Clear buffers
         this.frameBuffer = [];
         
-        console.log('✅ Camera stopped and cleaned up');
     }
     
     /**

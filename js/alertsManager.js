@@ -102,11 +102,11 @@ class AlertsManager {
 
     // Threshold controls
     document.getElementById('poorPostureThreshold')?.addEventListener('input', (e) => {
-      this.updateThreshold('poorPosture', parseInt(e.target.value));
+      this.updateThreshold('poorPosture', parseInt(e.target.value, 10));
     });
 
     document.getElementById('fairPostureThreshold')?.addEventListener('input', (e) => {
-      this.updateThreshold('fairPosture', parseInt(e.target.value));
+      this.updateThreshold('fairPosture', parseInt(e.target.value, 10));
     });
   }
 
@@ -125,7 +125,7 @@ class AlertsManager {
   }
 
   processMetricsForAlerts(metrics) {
-    if (!this.isAlertsEnabled) return;
+    if (!this.isAlertsEnabled) {return;}
 
     const score = metrics.postureScore || 0;
     const timestamp = Date.now();
@@ -149,10 +149,10 @@ class AlertsManager {
   }
 
   determineAlertLevel(score) {
-    if (score < this.alertThresholds.poorPosture) return 'poor';
-    if (score < this.alertThresholds.fairPosture) return 'fair';
-    if (score < this.alertThresholds.goodPosture) return 'warning';
-    if (score >= this.alertThresholds.excellentPosture) return 'excellent';
+    if (score < this.alertThresholds.poorPosture) {return 'poor';}
+    if (score < this.alertThresholds.fairPosture) {return 'fair';}
+    if (score < this.alertThresholds.goodPosture) {return 'warning';}
+    if (score >= this.alertThresholds.excellentPosture) {return 'excellent';}
     return 'good';
   }
 
@@ -219,7 +219,6 @@ class AlertsManager {
       this.sendAlertToBackend(alert);
     }
 
-    console.log(`🚨 Alert triggered: ${alertLevel} (Score: ${score})`);
   }
 
   generateAlertMessage(alertLevel, score, metrics) {
@@ -254,10 +253,10 @@ class AlertsManager {
 
     // Add specific advice based on metrics
     if (metrics.forwardHeadDistance > 5) {
-      return randomMessage + ' Try moving your monitor higher to reduce neck strain.';
+      return `${randomMessage} Try moving your monitor higher to reduce neck strain.`;
     }
     if (metrics.shoulderHeightDiff > 3) {
-      return randomMessage + ' Check your chair height and arm position.';
+      return `${randomMessage} Check your chair height and arm position.`;
     }
 
     return randomMessage;
@@ -359,7 +358,7 @@ class AlertsManager {
     return titles[level] || 'Posture Update';
   }
 
-  handleAlertAction(action, alert) {
+  handleAlertAction(action, _alert) {
     switch (action) {
       case 'guidance':
         this.showPostureGuidance();
@@ -388,7 +387,7 @@ class AlertsManager {
   }
 
   playAlertSound(alertLevel) {
-    if (!this.audioContext) return;
+    if (!this.audioContext) {return;}
 
     // Generate different tones for different alert levels
     const frequencies = {
@@ -448,7 +447,7 @@ class AlertsManager {
   }
 
   updateProgressiveAlerts(alertLevel, timestamp) {
-    if (!this.progressiveAlerts.enabled) return;
+    if (!this.progressiveAlerts.enabled) {return;}
 
     if (alertLevel === 'poor' || alertLevel === 'fair') {
       // Start or continue progressive alert tracking
@@ -498,7 +497,7 @@ class AlertsManager {
   }
 
   checkBreakReminders(timestamp) {
-    if (!this.breakReminders.enabled) return;
+    if (!this.breakReminders.enabled) {return;}
 
     const timeSinceLastReminder = timestamp - this.breakReminders.lastReminder;
     
@@ -526,25 +525,22 @@ class AlertsManager {
 
   showPostureGuidance() {
     // Show posture guidance modal/overlay
-    console.log('Showing posture guidance...');
     // This would open a guidance modal with posture tips
   }
 
   showPostureTips() {
     // Show posture tips
-    console.log('Showing posture tips...');
     // This would display contextual tips
   }
 
   suggestBreak() {
     // Suggest break activities
-    console.log('Suggesting break activities...');
     // This would show break exercise suggestions
   }
 
   recordAlertData(alertLevel, score, timestamp) {
     // Record for analytics
-    const data = {
+    const _data = {
       level: alertLevel,
       score,
       timestamp,

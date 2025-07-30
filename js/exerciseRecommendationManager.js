@@ -566,8 +566,8 @@ class ExerciseRecommendationManager {
   }
 
   calculatePriority(issue) {
-    if (issue.severity === 'severe') return 'high';
-    if (issue.severity === 'moderate') return 'medium';
+    if (issue.severity === 'severe') {return 'high';}
+    if (issue.severity === 'moderate') {return 'medium';}
     return 'low';
   }
 
@@ -594,7 +594,7 @@ class ExerciseRecommendationManager {
       this.alertsManager.showVisualAlert({
         id: 'severe_posture_alert',
         level: 'warning',
-        message: message,
+        message,
         timestamp: Date.now(),
         actions: [
           { text: 'View Exercises', action: () => this.showRecommendationModal() },
@@ -636,7 +636,7 @@ class ExerciseRecommendationManager {
 
   updateQuickTips() {
     const tipsContainer = document.getElementById('quickTipsContainer');
-    if (!tipsContainer) return;
+    if (!tipsContainer) {return;}
     
     const tipRecommendations = this.currentRecommendations.filter(rec => rec.category === 'tip');
     
@@ -687,7 +687,7 @@ class ExerciseRecommendationManager {
 
   updateExerciseRecommendations() {
     const exerciseContainer = document.getElementById('exerciseRecommendationsContainer');
-    if (!exerciseContainer) return;
+    if (!exerciseContainer) {return;}
     
     const exerciseRecommendations = this.currentRecommendations.filter(rec => 
       rec.category === 'exercise' || rec.category === 'maintenance'
@@ -752,21 +752,21 @@ class ExerciseRecommendationManager {
   // Exercise execution methods
   startExercise(exerciseId) {
     const exercise = this.findExerciseById(exerciseId);
-    if (!exercise) return;
+    if (!exercise) {return;}
     
     this.showExerciseModal(exercise);
   }
 
   startExerciseRoutine(issueType) {
     const recommendation = this.currentRecommendations.find(rec => rec.issue === issueType);
-    if (!recommendation) return;
+    if (!recommendation) {return;}
     
     this.showRoutineModal(recommendation);
   }
 
   showExerciseDetails(exerciseId) {
     const exercise = this.findExerciseById(exerciseId);
-    if (!exercise) return;
+    if (!exercise) {return;}
     
     this.showExerciseDetailsModal(exercise);
   }
@@ -774,7 +774,7 @@ class ExerciseRecommendationManager {
   findExerciseById(exerciseId) {
     for (const category of Object.values(this.exerciseDatabase)) {
       const exercise = category.exercises.find(ex => ex.id === exerciseId);
-      if (exercise) return exercise;
+      if (exercise) {return exercise;}
     }
     return null;
   }
@@ -856,7 +856,7 @@ class ExerciseRecommendationManager {
     const timerElement = document.getElementById('exerciseTimer');
     const timeDisplay = document.getElementById('timeRemaining');
     
-    if (!timerElement || !timeDisplay) return;
+    if (!timerElement || !timeDisplay) {return;}
     
     timerElement.style.display = 'block';
     
@@ -990,7 +990,7 @@ class ExerciseRecommendationManager {
 
   updateSessionExerciseDisplay() {
     const container = document.getElementById('sessionExercisesContainer');
-    if (!container) return;
+    if (!container) {return;}
     
     container.innerHTML = `
       <h4>Recommended for this session:</h4>
@@ -1067,7 +1067,7 @@ class ExerciseRecommendationManager {
       const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+LyvmsdBTiK3PPTfiwGH3vN8OSWQAoU');
       audio.volume = 0.3;
       audio.play().catch(() => {}); // Ignore errors if audio is blocked
-    } catch (error) {
+    } catch (_error) {
       // Audio not supported or blocked
     }
   }

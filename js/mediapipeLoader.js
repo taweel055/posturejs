@@ -27,7 +27,6 @@ class MediaPipeLoader {
         if ('serviceWorker' in navigator && 'caches' in window) {
             try {
                 this.cache = await caches.open('mediapipe-cache-v1');
-                console.log('✅ MediaPipe cache initialized');
             } catch (error) {
                 console.warn('⚠️ Cache initialization failed:', error);
             }
@@ -84,7 +83,6 @@ class MediaPipeLoader {
             this.loadedModules.set(moduleName, module);
             this.performanceMetrics.loadTimes[moduleName] = performance.now() - startTime;
             
-            console.log(`✅ MediaPipe ${moduleName} loaded in ${this.performanceMetrics.loadTimes[moduleName].toFixed(0)}ms`);
             return module;
             
         } catch (error) {
@@ -148,7 +146,6 @@ class MediaPipeLoader {
         if (this.cache) {
             const cachedResponse = await this.cache.match(url);
             if (cachedResponse) {
-                console.log(`📦 Using cached ${moduleName}`);
                 return this.processResponse(cachedResponse, moduleName, options);
             }
         }
@@ -189,7 +186,7 @@ class MediaPipeLoader {
     /**
      * Process response based on module type
      */
-    async processResponse(response, moduleName, options) {
+    async processResponse(response, moduleName, _options) {
         const scriptText = await response.text();
         
         // Create script element for dynamic loading
@@ -257,7 +254,7 @@ class MediaPipeLoader {
                         drawingUtils,
                         loadTime: performance.now() - startTime
                     };
-                } catch (error) {
+                } catch (_error) {
                     console.warn('⚠️ Advanced mode failed, falling back to basic');
                     return { mode: 'basic', fallback: true, loadTime: performance.now() - startTime };
                 }
@@ -282,7 +279,7 @@ class MediaPipeLoader {
                         cameraUtils,
                         loadTime: performance.now() - startTime
                     };
-                } catch (error) {
+                } catch (_error) {
                     console.warn('⚠️ GPU mode failed, falling back to advanced');
                     return this.loadAnalysisMode('advanced');
                 }
@@ -309,7 +306,6 @@ class MediaPipeLoader {
      * Preload modules for better performance
      */
     async preloadModules(modules = ['pose', 'drawing_utils']) {
-        console.log('🚀 Preloading MediaPipe modules...');
         
         const preloadPromises = modules.map(async (module) => {
             try {
@@ -323,7 +319,6 @@ class MediaPipeLoader {
         const results = await Promise.allSettled(preloadPromises);
         const summary = results.map(result => result.value || { status: 'failed' });
         
-        console.log('📊 Preload summary:', summary);
         return summary;
     }
     
@@ -368,7 +363,6 @@ class MediaPipeLoader {
         this.loadedModules.clear();
         this.loadingPromises.clear();
         this.loadingStates.clear();
-        console.log('🧹 MediaPipe cache cleared');
     }
     
     /**
