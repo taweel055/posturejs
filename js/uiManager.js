@@ -15,6 +15,8 @@ class UIManager {
             frameCount: 0
         };
         
+        this.loadingTimeout = null;
+        
         // Animation and performance
         this.animationQueue = [];
         this.isAnimating = false;
@@ -130,6 +132,7 @@ class UIManager {
         
         // Custom application events
         window.addEventListener('camera-initialized', (e) => this.handleCameraInitialized(e));
+        window.addEventListener('mediapipe-initialized', (e) => this.handleMediaPipeInitialized(e));
         window.addEventListener('camera-error', (e) => this.handleCameraError(e));
         window.addEventListener('analysis-result', (e) => this.handleAnalysisResult(e));
         window.addEventListener('config-changed', (e) => this.handleConfigChanged(e));
@@ -263,8 +266,10 @@ class UIManager {
                 detail: { mode: this.state.currentMode }
             }));
             
-            // Hide loading screen after a delay
-            setTimeout(() => this.hideLoadingScreen(), 2000);
+            // Hide loading screen after a delay (fallback mechanism)
+            this.loadingTimeout = setTimeout(() => {
+                this.hideLoadingScreen();
+            }, 2000);
             
         } catch (error) {
             console.error('Start analysis error:', error);
@@ -775,8 +780,24 @@ class UIManager {
      * Handle camera initialized event
      */
     handleCameraInitialized(_event) {
+        if (this.loadingTimeout) {
+            clearTimeout(this.loadingTimeout);
+            this.loadingTimeout = null;
+        }
         this.hideLoadingScreen();
         this.showNotification('📷 Camera initialized successfully!', 'success');
+    }
+    
+    /**
+     * Handle MediaPipe initialized event
+     */
+    handleMediaPipeInitialized(_event) {
+        if (this.loadingTimeout) {
+            clearTimeout(this.loadingTimeout);
+            this.loadingTimeout = null;
+        }
+        this.hideLoadingScreen();
+        this.showNotification('🧠 MediaPipe initialized successfully!', 'success');
     }
     
     /**
