@@ -791,13 +791,18 @@ class UIManager {
     /**
      * Handle MediaPipe initialized event
      */
-    handleMediaPipeInitialized(_event) {
+    handleMediaPipeInitialized(event) {
         if (this.loadingTimeout) {
             clearTimeout(this.loadingTimeout);
             this.loadingTimeout = null;
         }
         this.hideLoadingScreen();
-        this.showNotification('🧠 MediaPipe initialized successfully!', 'success');
+        
+        if (event.detail?.status === 'failed') {
+            this.showNotification('⚠️ Advanced features unavailable, using basic mode', 'warning');
+        } else {
+            this.showNotification('🧠 MediaPipe initialized successfully!', 'success');
+        }
     }
     
     /**

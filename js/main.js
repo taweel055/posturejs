@@ -54,7 +54,7 @@ class ProPostureFitnessApp {
         this.lastError = null;
         
         // Analysis state
-        this.analysisMode = 'advanced';
+        this.analysisMode = 'basic'; // Default to basic mode to avoid MediaPipe dependencies
         this.isAnalyzing = false;
         this.frameProcessingActive = false;
         
@@ -169,7 +169,15 @@ class ProPostureFitnessApp {
                     }
                 }));
             }).catch(error => {
-                console.warn('⚠️ MediaPipe preloading failed:', error);
+                console.warn('⚠️ MediaPipe preloading failed, falling back to basic mode:', error);
+                // Dispatch initialization complete event to unblock UI
+                window.dispatchEvent(new CustomEvent('mediapipe-initialized', {
+                    detail: { 
+                        status: 'failed',
+                        fallbackMode: 'basic',
+                        error: error.message
+                    }
+                }));
             });
             
         } catch (error) {
@@ -263,7 +271,9 @@ class ProPostureFitnessApp {
         // Apply any app-specific configurations here
         
         const config = window.ProPostureConfig;
-        this.analysisMode = config.get('analysis.mode');
+        const configMode = config?.get('analysis.mode');
+        
+        this.analysisMode = configMode || 'basic';
         
     }
     
@@ -272,7 +282,9 @@ class ProPostureFitnessApp {
      */
     initializePostureAnalyzer() {
         try {
-            this.postureAnalyzer = PostureAnalyzerFactory.create(this.analysisMode);
+            const mode = this.analysisMode || 'basic';
+            this.postureAnalyzer = PostureAnalyzerFactory.create(mode);
+            this.analysisMode = mode;
         } catch (error) {
             console.error('Posture analyzer initialization failed:', error);
             // Fallback to basic mode

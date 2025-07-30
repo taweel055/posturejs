@@ -32,7 +32,7 @@ class ConfigManager {
             
             // Analysis Settings
             analysis: {
-                mode: 'advanced', // basic, advanced, gpu
+                mode: 'basic', // basic, advanced, gpu
                 detectionConfidence: 0.7,
                 trackingConfidence: 0.5,
                 modelComplexity: 1, // 0=lite, 1=full, 2=heavy
