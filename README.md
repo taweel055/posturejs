@@ -2,6 +2,8 @@
 
 Professional posture analysis system converted from Python to JavaScript for web browsers. Features real-time pose detection, comprehensive scoring, and multiple analysis modes.
 
+> **Note**: This is a frontend-only application that runs entirely in the browser with mock API responses. No backend server is required.
+
 ## 🚀 Features
 
 ### Core Functionality
@@ -52,7 +54,7 @@ Professional posture analysis system converted from Python to JavaScript for web
    # Download the files to your local machine
    ```
 
-2. **Serve via HTTP Server**:
+2. **Serve via HTTP Server** (required for camera access):
    ```bash
    # Using Python
    python -m http.server 3000
@@ -68,6 +70,8 @@ Professional posture analysis system converted from Python to JavaScript for web
    ```
    http://localhost:3000
    ```
+
+> **Important**: The application must be served over HTTP/HTTPS (not opened as a file) for camera access to work. All data processing happens locally in your browser with mock API responses.
 
 ### Development Setup
 
@@ -85,6 +89,8 @@ Professional posture analysis system converted from Python to JavaScript for web
    ```bash
    npm run build
    ```
+
+> **Note**: The development server provides hot reloading and serves the application with proper HTTPS for camera access. All API calls use mock responses defined in `js/apiService.js`.
 
 ## 📋 Usage
 
@@ -266,9 +272,10 @@ The application automatically detects browser capabilities and adjusts functiona
 
 ### Data Handling
 - **No Data Storage**: Camera frames processed locally only
-- **No External Transmission**: All analysis happens in browser
+- **No External Transmission**: All analysis happens in browser with mock API responses
 - **Optional Screenshots**: User-controlled image capture
 - **Privacy Mode**: Disable analytics and history
+- **Mock Backend**: All API calls return simulated responses for demonstration purposes
 
 ### Security Features
 - **HTTPS Required**: Secure camera access

@@ -98,7 +98,7 @@ class VideoControlsManager {
     });
     
     document.getElementById('frameRate')?.addEventListener('change', (e) => {
-      this.changeFrameRate(parseInt(e.target.value));
+      this.changeFrameRate(parseInt(e.target.value, 10));
     });
 
     // Video effects
@@ -241,7 +241,7 @@ class VideoControlsManager {
   }
 
   async switchCamera(deviceId) {
-    if (!deviceId || deviceId === this.currentCamera) return;
+    if (!deviceId || deviceId === this.currentCamera) {return;}
     
     try {
       this.currentCamera = deviceId;
@@ -272,7 +272,6 @@ class VideoControlsManager {
       // Update resolution display
       this.updateResolutionDisplay();
       
-      console.log('Camera switched successfully');
     } catch (error) {
       console.error('Error switching camera:', error);
       this.showError('Failed to switch camera. Please try again.');
@@ -300,7 +299,7 @@ class VideoControlsManager {
   }
 
   async changeVideoQuality(quality) {
-    if (quality === this.currentQuality) return;
+    if (quality === this.currentQuality) {return;}
     
     this.currentQuality = quality;
     
@@ -313,7 +312,7 @@ class VideoControlsManager {
   }
 
   changeFrameRate(frameRate) {
-    if (frameRate === this.currentFrameRate) return;
+    if (frameRate === this.currentFrameRate) {return;}
     
     this.currentFrameRate = frameRate;
     
@@ -371,19 +370,21 @@ class VideoControlsManager {
         }
         break;
         
-      case 'postureGuide':
+      case 'postureGuide': {
         const guideOverlay = document.getElementById('postureGuideOverlay');
         if (guideOverlay) {
           guideOverlay.style.display = enabled ? 'block' : 'none';
         }
         break;
+      }
         
-      case 'grid':
+      case 'grid': {
         const gridOverlay = document.getElementById('alignmentGridOverlay');
         if (gridOverlay) {
           gridOverlay.style.display = enabled ? 'block' : 'none';
         }
         break;
+      }
     }
     
     this.saveSettings();
@@ -418,7 +419,7 @@ class VideoControlsManager {
 
   applyPreset(presetName) {
     const preset = this.presets[presetName];
-    if (!preset) return;
+    if (!preset) {return;}
     
     // Update quality settings
     this.currentQuality = preset.quality;
@@ -428,8 +429,8 @@ class VideoControlsManager {
     const qualitySelect = document.getElementById('videoQuality');
     const frameRateSelect = document.getElementById('frameRate');
     
-    if (qualitySelect) qualitySelect.value = preset.quality;
-    if (frameRateSelect) frameRateSelect.value = preset.frameRate;
+    if (qualitySelect) {qualitySelect.value = preset.quality;}
+    if (frameRateSelect) {frameRateSelect.value = preset.frameRate;}
     
     // Update advanced settings
     this.advancedSettings.detectionConfidence = preset.detectionConfidence;
@@ -507,7 +508,7 @@ class VideoControlsManager {
     const canvas = document.getElementById('outputCanvas');
     const video = document.getElementById('videoElement');
     
-    if (!canvas || !video) return;
+    if (!canvas || !video) {return;}
     
     // Create a temporary canvas for the screenshot
     const screenshotCanvas = document.createElement('canvas');
@@ -621,7 +622,7 @@ class VideoControlsManager {
   }
 
   saveRecording() {
-    if (this.recordedChunks.length === 0) return;
+    if (this.recordedChunks.length === 0) {return;}
     
     const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
     const url = URL.createObjectURL(blob);
@@ -650,10 +651,10 @@ class VideoControlsManager {
   }
 
   startRecordingTimer() {
-    if (!this.isRecording) return;
+    if (!this.isRecording) {return;}
     
     const updateTimer = () => {
-      if (!this.isRecording || !this.recordingStartTime) return;
+      if (!this.isRecording || !this.recordingStartTime) {return;}
       
       const elapsed = Date.now() - this.recordingStartTime;
       const minutes = Math.floor(elapsed / 60000);
@@ -695,7 +696,7 @@ class VideoControlsManager {
 
   handleKeyboardShortcuts(event) {
     // Only handle shortcuts when not typing in inputs
-    if (event.target.tagName === 'INPUT' || event.target.tagName === 'SELECT') return;
+    if (event.target.tagName === 'INPUT' || event.target.tagName === 'SELECT') {return;}
     
     switch (event.key.toLowerCase()) {
       case ' ':
@@ -714,7 +715,7 @@ class VideoControlsManager {
         event.preventDefault();
         this.calibratePosition();
         break;
-      case 'g':
+      case 'g': {
         event.preventDefault();
         const gridCheckbox = document.getElementById('showGrid');
         if (gridCheckbox) {
@@ -722,6 +723,7 @@ class VideoControlsManager {
           this.toggleOverlay('grid', gridCheckbox.checked);
         }
         break;
+      }
       case 's':
         if (event.ctrlKey || event.metaKey) {
           event.preventDefault();
@@ -789,23 +791,23 @@ class VideoControlsManager {
   initializeControls() {
     // Set quality
     const qualitySelect = document.getElementById('videoQuality');
-    if (qualitySelect) qualitySelect.value = this.currentQuality;
+    if (qualitySelect) {qualitySelect.value = this.currentQuality;}
     
     // Set frame rate
     const frameRateSelect = document.getElementById('frameRate');
-    if (frameRateSelect) frameRateSelect.value = this.currentFrameRate;
+    if (frameRateSelect) {frameRateSelect.value = this.currentFrameRate;}
     
     // Set effects
     const flipCheckbox = document.getElementById('flipVideo');
-    if (flipCheckbox) flipCheckbox.checked = this.videoEffects.flip;
+    if (flipCheckbox) {flipCheckbox.checked = this.videoEffects.flip;}
     
     const contrastCheckbox = document.getElementById('enhanceContrast');
-    if (contrastCheckbox) contrastCheckbox.checked = this.videoEffects.enhanceContrast;
+    if (contrastCheckbox) {contrastCheckbox.checked = this.videoEffects.enhanceContrast;}
     
     // Set overlays
     Object.keys(this.overlayStates).forEach(overlayType => {
       const checkbox = document.getElementById(`show${overlayType.charAt(0).toUpperCase() + overlayType.slice(1)}`);
-      if (checkbox) checkbox.checked = this.overlayStates[overlayType];
+      if (checkbox) {checkbox.checked = this.overlayStates[overlayType];}
     });
     
     // Set advanced settings
@@ -887,17 +889,17 @@ class VideoControlsManager {
     // Update displays based on analyzer data
     if (analyzerData.fps !== undefined) {
       const fpsDisplay = document.getElementById('fpsDisplay');
-      if (fpsDisplay) fpsDisplay.textContent = Math.round(analyzerData.fps);
+      if (fpsDisplay) {fpsDisplay.textContent = Math.round(analyzerData.fps);}
     }
     
     if (analyzerData.score !== undefined) {
       const scoreDisplay = document.getElementById('scoreDisplay');
-      if (scoreDisplay) scoreDisplay.textContent = analyzerData.score.toFixed(1);
+      if (scoreDisplay) {scoreDisplay.textContent = analyzerData.score.toFixed(1);}
     }
     
     if (analyzerData.status !== undefined) {
       const statusDisplay = document.getElementById('postureStatus');
-      if (statusDisplay) statusDisplay.textContent = analyzerData.status;
+      if (statusDisplay) {statusDisplay.textContent = analyzerData.status;}
     }
   }
 }

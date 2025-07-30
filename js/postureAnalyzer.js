@@ -106,11 +106,9 @@ class BasicPostureAnalyzer extends PostureAnalyzer {
                     maxDetectedFaces: 1,
                     fastMode: true
                 });
-                console.log('✅ Face Detection API initialized');
             } else {
                 // Fallback to basic detection
                 this.useBasicDetection = true;
-                console.log('⚠️ Using basic face detection fallback');
             }
         } catch (error) {
             console.warn('Face detection initialization failed:', error);
@@ -336,7 +334,6 @@ class AdvancedPostureAnalyzer extends PostureAnalyzer {
             
             this.initialized = true;
             this.loadingProgress = 100;
-            console.log(`✅ MediaPipe Pose initialized (${mediapipeData.loadTime.toFixed(0)}ms)`);
             
             // Dispatch initialization event
             window.dispatchEvent(new CustomEvent('mediapipe-initialized', {
@@ -345,7 +342,6 @@ class AdvancedPostureAnalyzer extends PostureAnalyzer {
             
         } catch (error) {
             console.error('MediaPipe initialization failed:', error);
-            console.log('🔄 Falling back to basic mode');
             
             // Graceful fallback to basic mode
             this.mode = AnalysisMode.BASIC;
@@ -591,7 +587,6 @@ class GPUPostureAnalyzer extends AdvancedPostureAnalyzer {
             
             this.initialized = true;
             this.loadingProgress = 100;
-            console.log(`✅ GPU-accelerated MediaPipe initialized (${mediapipeData.loadTime.toFixed(0)}ms)`);
             
             window.dispatchEvent(new CustomEvent('mediapipe-initialized', {
                 detail: { mode: this.mode, loadTime: mediapipeData.loadTime, gpuAccelerated: true }
@@ -599,7 +594,6 @@ class GPUPostureAnalyzer extends AdvancedPostureAnalyzer {
             
         } catch (error) {
             console.error('GPU MediaPipe initialization failed:', error);
-            console.log('🔄 Falling back to advanced mode');
             
             // Fallback to advanced mode
             this.mode = AnalysisMode.ADVANCED;
@@ -640,7 +634,6 @@ class GPUPostureAnalyzer extends AdvancedPostureAnalyzer {
             
             if (this.webglContext) {
                 this.setupComputeShaders();
-                console.log('✅ WebGL GPU acceleration initialized');
             } else {
                 console.warn('⚠️ WebGL not available, falling back to CPU');
             }

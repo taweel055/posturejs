@@ -93,7 +93,7 @@ class HeaderManager {
     });
 
     // Close dropdowns when clicking outside
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', (_e) => {
       this.closeAllDropdowns();
     });
 
@@ -281,7 +281,7 @@ class HeaderManager {
 
   async loadNotifications() {
     try {
-      if (!this.api.isAuthenticated()) return;
+      if (!this.api.isAuthenticated()) {return;}
       
       // Get notifications from backend
       const response = await this.api.request('/users/notifications');
@@ -340,7 +340,7 @@ class HeaderManager {
 
   renderNotificationsList() {
     const notificationsList = document.getElementById('notificationsList');
-    if (!notificationsList) return;
+    if (!notificationsList) {return;}
 
     if (this.notifications.length === 0) {
       notificationsList.innerHTML = `
@@ -364,7 +364,7 @@ class HeaderManager {
     // Add click handlers
     notificationsList.querySelectorAll('.notification-item').forEach(item => {
       item.addEventListener('click', () => {
-        const id = parseInt(item.dataset.id);
+        const id = parseInt(item.dataset.id, 10);
         this.markNotificationAsRead(id);
       });
     });
@@ -378,10 +378,10 @@ class HeaderManager {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffMins < 1) {return 'Just now';}
+    if (diffMins < 60) {return `${diffMins}m ago`;}
+    if (diffHours < 24) {return `${diffHours}h ago`;}
+    if (diffDays < 7) {return `${diffDays}d ago`;}
     return time.toLocaleDateString();
   }
 
@@ -475,7 +475,7 @@ class HeaderManager {
   }
 
   setupWebSocketHandlers() {
-    if (!this.api.socket) return;
+    if (!this.api.socket) {return;}
 
     // Handle real-time notifications
     this.api.socket.on('notification', (notification) => {
@@ -540,12 +540,12 @@ class HeaderManager {
     const dropdownUserName = document.getElementById('dropdownUserName');
     const displayName = user.firstName || user.username || 'User';
     
-    if (headerUserName) headerUserName.textContent = displayName;
-    if (dropdownUserName) dropdownUserName.textContent = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username;
+    if (headerUserName) {headerUserName.textContent = displayName;}
+    if (dropdownUserName) {dropdownUserName.textContent = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username;}
     
     // Update email
     const dropdownUserEmail = document.getElementById('dropdownUserEmail');
-    if (dropdownUserEmail) dropdownUserEmail.textContent = user.email;
+    if (dropdownUserEmail) {dropdownUserEmail.textContent = user.email;}
   }
 
   generateInitials(firstName, lastName, username) {
@@ -583,37 +583,31 @@ class HeaderManager {
   // User dropdown actions
   async viewProfile() {
     this.closeAllDropdowns();
-    console.log('View Profile clicked');
     // TODO: Implement profile view modal/page
   }
 
   async editProfile() {
     this.closeAllDropdowns();
-    console.log('Edit Profile clicked');
     // TODO: Implement profile edit modal/page
   }
 
   async viewStats() {
     this.closeAllDropdowns();
-    console.log('View Stats clicked');
     // TODO: Implement stats view modal/page
   }
 
   async manageGoals() {
     this.closeAllDropdowns();
-    console.log('Manage Goals clicked');
     // TODO: Implement goals management modal/page
   }
 
   async accountSettings() {
     this.closeAllDropdowns();
-    console.log('Account Settings clicked');
     // TODO: Implement account settings modal/page
   }
 
   async helpSupport() {
     this.closeAllDropdowns();
-    console.log('Help & Support clicked');
     // TODO: Implement help/support modal/page
   }
 

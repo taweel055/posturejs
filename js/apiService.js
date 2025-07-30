@@ -28,12 +28,8 @@ class APIService {
         timeout: 3000
       });
       this.offlineMode = !response.ok;
-      if (!this.offlineMode) {
-        console.log('🌐 Connected to backend server');
-      }
-    } catch (error) {
+    } catch (_error) {
       this.offlineMode = true;
-      console.log('📱 Running in offline mode - backend not available');
     }
   }
 
@@ -53,8 +49,8 @@ class APIService {
             success: true,
             message: 'Login successful',
             tokens: {
-              accessToken: 'mock_admin_token_' + Date.now(),
-              refreshToken: 'mock_refresh_token_' + Date.now()
+              accessToken: `mock_admin_token_${Date.now()}`,
+              refreshToken: `mock_refresh_token_${Date.now()}`
             },
             user: {
               id: 'admin_001',
@@ -78,8 +74,8 @@ class APIService {
             success: true,
             message: 'Demo login successful',
             tokens: {
-              accessToken: 'mock_demo_token_' + Date.now(),
-              refreshToken: 'mock_demo_refresh_' + Date.now()
+              accessToken: `mock_demo_token_${Date.now()}`,
+              refreshToken: `mock_demo_refresh_${Date.now()}`
             },
             user: {
               id: 'demo_001',
@@ -117,11 +113,11 @@ class APIService {
           success: true,
           message: 'Registration successful',
           tokens: {
-            accessToken: 'mock_token_' + Date.now(),
-            refreshToken: 'mock_refresh_' + Date.now()
+            accessToken: `mock_token_${Date.now()}`,
+            refreshToken: `mock_refresh_${Date.now()}`
           },
           user: {
-            id: 'user_' + Date.now(),
+            id: `user_${Date.now()}`,
             email: userData.email,
             username: userData.username,
             firstName: userData.firstName,
@@ -155,7 +151,7 @@ class APIService {
     };
     
     if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
+      headers.Authorization = `Bearer ${this.token}`;
     }
     
     return headers;
@@ -187,7 +183,7 @@ class APIService {
         const refreshed = await this.refreshAccessToken();
         if (refreshed) {
           // Retry the original request
-          config.headers['Authorization'] = `Bearer ${this.token}`;
+          config.headers.Authorization = `Bearer ${this.token}`;
           const retryResponse = await fetch(url, config);
           return await this.handleResponse(retryResponse);
         }
@@ -418,11 +414,11 @@ class APIService {
     }
 
     if (this.socket && this.socket.connected) {
-      console.log('WebSocket already connected');
       return;
     }
 
     // Import Socket.IO (assuming it's loaded globally)
+    // eslint-disable-next-line no-undef
     this.socket = io('http://localhost:5001', {
       auth: {
         token: this.token
@@ -434,20 +430,17 @@ class APIService {
   }
 
   setupWebSocketListeners() {
-    if (!this.socket) return;
+    if (!this.socket) {return;}
 
     this.socket.on('connect', () => {
-      console.log('✅ WebSocket connected');
       this.onWebSocketConnected();
     });
 
     this.socket.on('disconnect', (reason) => {
-      console.log('🔌 WebSocket disconnected:', reason);
       this.onWebSocketDisconnected(reason);
     });
 
-    this.socket.on('connected', (data) => {
-      console.log('WebSocket authentication successful:', data);
+    this.socket.on('connected', (_data) => {
     });
 
     this.socket.on('error', (error) => {
@@ -531,38 +524,32 @@ class APIService {
     // Override in UI components
   }
 
-  onWebSocketDisconnected(reason) {
+  onWebSocketDisconnected(_reason) {
     // Override in UI components
   }
 
-  onPostureDataReceived(data) {
+  onPostureDataReceived(_data) {
     // Override in UI components
-    console.log('Real-time posture data:', data);
   }
 
-  onPostureAlert(alert) {
+  onPostureAlert(_alert) {
     // Override in UI components
-    console.log('Posture alert:', alert);
   }
 
-  onSessionStarted(data) {
+  onSessionStarted(_data) {
     // Override in UI components
-    console.log('Session started:', data);
   }
 
-  onSessionEnded(data) {
+  onSessionEnded(_data) {
     // Override in UI components
-    console.log('Session ended:', data);
   }
 
-  onGoalAchieved(data) {
+  onGoalAchieved(_data) {
     // Override in UI components
-    console.log('Goal achieved:', data);
   }
 
-  onGoalProgress(data) {
+  onGoalProgress(_data) {
     // Override in UI components
-    console.log('Goal progress:', data);
   }
 
   // Utility Methods

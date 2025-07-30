@@ -133,7 +133,6 @@
             logEntry.textContent = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
             logElement.appendChild(logEntry);
             logElement.scrollTop = logElement.scrollHeight;
-            console.log(`[TEST] ${message}`);
         }
 
         function setTestResult(sectionId, passed, message) {

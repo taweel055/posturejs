@@ -410,7 +410,6 @@ class AuthManager {
 
     try {
       const response = await this.api.login(email, password);
-      console.log('Login successful:', response);
       
       this.hideAuthUI();
       this.showUserInfo();
@@ -457,7 +456,6 @@ class AuthManager {
 
     try {
       const response = await this.api.register(userData);
-      console.log('Registration successful:', response);
       
       this.hideAuthUI();
       this.showUserInfo();
@@ -479,7 +477,6 @@ class AuthManager {
   }
 
   skipAuthentication() {
-    console.log('Skipping authentication - entering demo mode');
     
     // Set demo user data
     const demoUser = {
@@ -493,7 +490,7 @@ class AuthManager {
     };
     
     // Set demo token
-    this.api.token = 'demo_token_' + Date.now();
+    this.api.token = `demo_token_${Date.now()}`;
     this.api.currentUser = demoUser;
     localStorage.setItem('access_token', this.api.token);
     localStorage.setItem('demo_mode', 'true');
@@ -537,11 +534,11 @@ class AuthManager {
 
   showUserInfo() {
     const user = this.api.getCurrentUser();
-    if (!user) return;
+    if (!user) {return;}
 
     // Remove existing old user info overlay if it exists
     const existing = document.getElementById('user-info');
-    if (existing) existing.remove();
+    if (existing) {existing.remove();}
 
     // The new header will handle user info display
     // Just trigger the auth state change callback for header integration
@@ -556,7 +553,7 @@ class AuthManager {
       
       // Remove user info
       const userInfo = document.getElementById('user-info');
-      if (userInfo) userInfo.remove();
+      if (userInfo) {userInfo.remove();}
       
       // Show auth UI
       this.showAuthUI();

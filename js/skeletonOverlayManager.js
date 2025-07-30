@@ -122,21 +122,21 @@ class SkeletonOverlayManager {
 
   resizeCanvases() {
     const video = document.getElementById('videoElement');
-    if (!video) return;
+    if (!video) {return;}
     
     const rect = video.getBoundingClientRect();
     
     // Resize overlay canvas
     this.overlayCanvas.width = video.videoWidth || rect.width;
     this.overlayCanvas.height = video.videoHeight || rect.height;
-    this.overlayCanvas.style.width = rect.width + 'px';
-    this.overlayCanvas.style.height = rect.height + 'px';
+    this.overlayCanvas.style.width = `${rect.width}px`;
+    this.overlayCanvas.style.height = `${rect.height}px`;
     
     // Resize guide canvas
     this.guideCanvas.width = this.overlayCanvas.width;
     this.guideCanvas.height = this.overlayCanvas.height;
-    this.guideCanvas.style.width = rect.width + 'px';
-    this.guideCanvas.style.height = rect.height + 'px';
+    this.guideCanvas.style.width = `${rect.width}px`;
+    this.guideCanvas.style.height = `${rect.height}px`;
     
     // Redraw static guides
     this.drawStaticGuides();
@@ -198,7 +198,7 @@ class SkeletonOverlayManager {
   }
 
   updatePoseData(analysisResult) {
-    if (!analysisResult || !analysisResult.landmarks) return;
+    if (!analysisResult || !analysisResult.landmarks) {return;}
     
     this.currentPose = analysisResult.landmarks;
     this.postureQuality = this.determinePostureQuality(analysisResult.score);
@@ -206,14 +206,14 @@ class SkeletonOverlayManager {
   }
 
   determinePostureQuality(score) {
-    if (score >= 80) return 'good';
-    if (score >= 60) return 'warning';
-    if (score < 40) return 'poor';
+    if (score >= 80) {return 'good';}
+    if (score >= 60) {return 'warning';}
+    if (score < 40) {return 'poor';}
     return 'warning';
   }
 
   startRenderLoop() {
-    if (this.isAnimating) return;
+    if (this.isAnimating) {return;}
     
     this.isAnimating = true;
     const render = () => {
@@ -235,7 +235,7 @@ class SkeletonOverlayManager {
   }
 
   renderFrame() {
-    if (!this.overlayCtx) return;
+    if (!this.overlayCtx) {return;}
     
     // Clear overlay canvas
     this.overlayCtx.clearRect(0, 0, this.overlayCanvas.width, this.overlayCanvas.height);
@@ -257,7 +257,7 @@ class SkeletonOverlayManager {
   }
 
   drawSkeleton() {
-    if (!this.currentPose || !this.overlayCtx) return;
+    if (!this.currentPose || !this.overlayCtx) {return;}
     
     const ctx = this.overlayCtx;
     const color = this.skeletonSettings.colors[this.postureQuality];
@@ -295,7 +295,7 @@ class SkeletonOverlayManager {
   }
 
   drawLandmarks() {
-    if (!this.currentPose || !this.overlayCtx) return;
+    if (!this.currentPose || !this.overlayCtx) {return;}
     
     const ctx = this.overlayCtx;
     const color = this.skeletonSettings.colors[this.postureQuality];
@@ -306,7 +306,7 @@ class SkeletonOverlayManager {
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 1;
     
-    this.currentPose.forEach((landmark, index) => {
+    this.currentPose.forEach((landmark, _index) => {
       if (landmark.visibility > 0.5) {
         const x = landmark.x * this.overlayCanvas.width;
         const y = landmark.y * this.overlayCanvas.height;
@@ -322,7 +322,7 @@ class SkeletonOverlayManager {
   }
 
   drawStaticGuides() {
-    if (!this.guideCtx) return;
+    if (!this.guideCtx) {return;}
     
     // Clear guide canvas
     this.guideCtx.clearRect(0, 0, this.guideCanvas.width, this.guideCanvas.height);
@@ -462,9 +462,9 @@ class SkeletonOverlayManager {
   }
 
   drawRealTimeGuides() {
-    if (!this.currentPose || !this.overlayCtx) return;
+    if (!this.currentPose || !this.overlayCtx) {return;}
     
-    const ctx = this.overlayCtx;
+    const _ctx = this.overlayCtx;
     
     // Draw posture deviation indicators
     this.drawPostureDeviationIndicators();
@@ -481,7 +481,7 @@ class SkeletonOverlayManager {
     const leftShoulder = this.currentPose[11];
     const rightShoulder = this.currentPose[12];
     
-    if (!nose || !leftShoulder || !rightShoulder) return;
+    if (!nose || !leftShoulder || !rightShoulder) {return;}
     
     // Calculate deviations
     const shoulderCenter = {
@@ -525,7 +525,7 @@ class SkeletonOverlayManager {
     const leftShoulder = this.currentPose[11];
     const rightShoulder = this.currentPose[12];
     
-    if (!nose || !leftShoulder || !rightShoulder) return;
+    if (!nose || !leftShoulder || !rightShoulder) {return;}
     
     const shoulderCenter = {
       x: (leftShoulder.x + rightShoulder.x) / 2,

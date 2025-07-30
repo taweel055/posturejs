@@ -27,7 +27,6 @@ class MediaPipeLoader {
         if ('serviceWorker' in navigator && 'caches' in window) {
             try {
                 this.cache = await caches.open('mediapipe-cache-v1');
-                console.log('✅ MediaPipe cache initialized');
             } catch (error) {
                 console.warn('⚠️ Cache initialization failed:', error);
             }
@@ -40,21 +39,19 @@ class MediaPipeLoader {
     setupFallbackStrategies() {
         this.fallbackStrategies.set('pose', [
             // Strategy 1: CDN with version fallback
-            { type: 'cdn', url: 'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404', timeout: 5000 },
+            { type: 'cdn', url: 'https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404', timeout: 15000 },
             // Strategy 2: Alternative CDN
-            { type: 'cdn', url: 'https://unpkg.com/@mediapipe/pose@0.5.1675469404', timeout: 8000 },
-            // Strategy 3: Local fallback (if available)
-            { type: 'local', path: '/assets/mediapipe/pose', timeout: 2000 }
+            { type: 'cdn', url: 'https://unpkg.com/@mediapipe/pose@0.5.1675469404', timeout: 20000 }
         ]);
         
         this.fallbackStrategies.set('camera_utils', [
-            { type: 'cdn', url: 'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1640029074', timeout: 3000 },
-            { type: 'cdn', url: 'https://unpkg.com/@mediapipe/camera_utils@0.3.1640029074', timeout: 5000 }
+            { type: 'cdn', url: 'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1640029074', timeout: 10000 },
+            { type: 'cdn', url: 'https://unpkg.com/@mediapipe/camera_utils@0.3.1640029074', timeout: 12000 }
         ]);
         
         this.fallbackStrategies.set('drawing_utils', [
-            { type: 'cdn', url: 'https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1620248257', timeout: 3000 },
-            { type: 'cdn', url: 'https://unpkg.com/@mediapipe/drawing_utils@0.3.1620248257', timeout: 5000 }
+            { type: 'cdn', url: 'https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1620248257', timeout: 10000 },
+            { type: 'cdn', url: 'https://unpkg.com/@mediapipe/drawing_utils@0.3.1620248257', timeout: 12000 }
         ]);
     }
     
@@ -84,7 +81,6 @@ class MediaPipeLoader {
             this.loadedModules.set(moduleName, module);
             this.performanceMetrics.loadTimes[moduleName] = performance.now() - startTime;
             
-            console.log(`✅ MediaPipe ${moduleName} loaded in ${this.performanceMetrics.loadTimes[moduleName].toFixed(0)}ms`);
             return module;
             
         } catch (error) {
@@ -112,7 +108,7 @@ class MediaPipeLoader {
                 
             } catch (error) {
                 lastError = error;
-                console.warn(`⚠️ Strategy ${strategy.type} failed for ${moduleName}:`, error.message);
+                console.warn(`⚠️ Strategy ${strategy.type} failed for ${moduleName} (${strategy.url || strategy.path}):`, error.message);
                 this.performanceMetrics.fallbackUsage++;
                 continue;
             }
@@ -139,23 +135,25 @@ class MediaPipeLoader {
     }
     
     /**
-     * Load from CDN with caching
+     * Load from CDN with caching and retry logic
      */
-    async loadFromCDN(moduleName, strategy, options) {
+    async loadFromCDN(moduleName, strategy, options, retryCount = 0) {
         const { url, timeout } = strategy;
+        const maxRetries = 2;
         
         // Check cache first
         if (this.cache) {
             const cachedResponse = await this.cache.match(url);
             if (cachedResponse) {
-                console.log(`📦 Using cached ${moduleName}`);
                 return this.processResponse(cachedResponse, moduleName, options);
             }
         }
         
+        const actualTimeout = timeout + (retryCount * 5000);
+        
         // Create timeout promise
         const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error(`Timeout loading ${moduleName}`)), timeout);
+            setTimeout(() => reject(new Error(`Timeout loading ${moduleName} after ${actualTimeout}ms`)), actualTimeout);
         });
         
         // Create fetch promise
@@ -170,6 +168,12 @@ class MediaPipeLoader {
             }
             
             return this.processResponse(response, moduleName, options);
+        }).catch(error => {
+            if (retryCount < maxRetries && (error.message.includes('Timeout') || error.message.includes('Failed to fetch'))) {
+                console.warn(`⚠️ Retry ${retryCount + 1}/${maxRetries} for ${moduleName} from ${url}`);
+                return this.loadFromCDN(moduleName, strategy, options, retryCount + 1);
+            }
+            throw error;
         });
         
         return Promise.race([fetchPromise, timeoutPromise]);
@@ -189,7 +193,7 @@ class MediaPipeLoader {
     /**
      * Process response based on module type
      */
-    async processResponse(response, moduleName, options) {
+    async processResponse(response, moduleName, _options) {
         const scriptText = await response.text();
         
         // Create script element for dynamic loading
@@ -257,7 +261,7 @@ class MediaPipeLoader {
                         drawingUtils,
                         loadTime: performance.now() - startTime
                     };
-                } catch (error) {
+                } catch (_error) {
                     console.warn('⚠️ Advanced mode failed, falling back to basic');
                     return { mode: 'basic', fallback: true, loadTime: performance.now() - startTime };
                 }
@@ -282,7 +286,7 @@ class MediaPipeLoader {
                         cameraUtils,
                         loadTime: performance.now() - startTime
                     };
-                } catch (error) {
+                } catch (_error) {
                     console.warn('⚠️ GPU mode failed, falling back to advanced');
                     return this.loadAnalysisMode('advanced');
                 }
@@ -309,7 +313,6 @@ class MediaPipeLoader {
      * Preload modules for better performance
      */
     async preloadModules(modules = ['pose', 'drawing_utils']) {
-        console.log('🚀 Preloading MediaPipe modules...');
         
         const preloadPromises = modules.map(async (module) => {
             try {
@@ -323,7 +326,6 @@ class MediaPipeLoader {
         const results = await Promise.allSettled(preloadPromises);
         const summary = results.map(result => result.value || { status: 'failed' });
         
-        console.log('📊 Preload summary:', summary);
         return summary;
     }
     
@@ -368,7 +370,6 @@ class MediaPipeLoader {
         this.loadedModules.clear();
         this.loadingPromises.clear();
         this.loadingStates.clear();
-        console.log('🧹 MediaPipe cache cleared');
     }
     
     /**

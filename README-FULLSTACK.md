@@ -31,30 +31,28 @@ A comprehensive posture analysis application with real-time monitoring, user acc
 
 ## 🚀 Quick Start
 
-### Option 1: Full-Stack Docker Setup (Recommended)
+### Option 1: Development Mode (Recommended)
 
 ```bash
-# Start complete application with Docker
-./start-fullstack.sh
+# Terminal 1: Start Backend
+cd backend
+npm install
+npm run db:migrate
+npm run db:seed
+npm run dev
+
+# Terminal 2: Start Frontend
+npm install
+npm run dev
 ```
 
 This will:
-- Build and start both frontend and backend
+- Start both frontend and backend services
 - Initialize SQLite database with demo data
 - Set up WebSocket connections
 - Available at http://localhost:3000 (frontend) and http://localhost:5000 (backend)
 
-### Option 2: Development Mode
-
-```bash
-# Terminal 1: Start Backend
-./start-backend.sh
-
-# Terminal 2: Start Frontend
-npm run dev
-```
-
-### Option 3: Individual Services
+### Option 2: Individual Services
 
 ```bash
 # Backend only
@@ -72,7 +70,6 @@ npm run dev
 ## 📋 Requirements
 
 - **Node.js 18+**
-- **Docker & Docker Compose** (for full-stack setup)
 - **Modern Browser** with WebRTC support
 - **Camera Access** for posture analysis
 
@@ -180,8 +177,7 @@ Backend (Node.js/Express)
 └── Real-time Analytics
 
 Infrastructure
-├── Docker Containers
-├── Nginx Reverse Proxy
+├── Node.js Services
 ├── Database Persistence
 └── Health Monitoring
 ```
@@ -220,18 +216,7 @@ npm run test:e2e
 
 ## 📦 Deployment
 
-### Production Docker Deployment
-
-```bash
-# Build production images
-cd deployment
-docker-compose up --build -d
-
-# Monitor services
-docker-compose logs -f
-```
-
-### Manual Deployment
+### Production Deployment
 
 ```bash
 # Build frontend

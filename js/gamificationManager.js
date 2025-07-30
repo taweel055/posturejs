@@ -188,27 +188,27 @@ class GamificationManager {
     this.motivationMessages = {
       levelUp: [
         "🎉 Level up! You're becoming a posture pro!",
-        "🚀 New level achieved! Your dedication is paying off!",
-        "⭐ Congratulations on reaching level {level}!",
-        "🎯 Level {level} unlocked! Keep up the great work!"
+        '🚀 New level achieved! Your dedication is paying off!',
+        '⭐ Congratulations on reaching level {level}!',
+        '🎯 Level {level} unlocked! Keep up the great work!'
       ],
       achievement: [
-        "🏆 Achievement unlocked: {name}!",
+        '🏆 Achievement unlocked: {name}!',
         "💪 You've earned the {name} achievement!",
-        "🌟 Incredible! {name} achievement completed!",
-        "🎊 Congratulations on earning {name}!"
+        '🌟 Incredible! {name} achievement completed!',
+        '🎊 Congratulations on earning {name}!'
       ],
       streak: [
         "🔥 {days} day streak! You're on fire!",
-        "⚡ Amazing {days} day streak! Keep it going!",
+        '⚡ Amazing {days} day streak! Keep it going!',
         "🎯 {days} days in a row! You're unstoppable!",
-        "💫 {days} day streak! Consistency is key!"
+        '💫 {days} day streak! Consistency is key!'
       ],
       encouragement: [
-        "💪 Great posture! Keep it up!",
+        '💪 Great posture! Keep it up!',
         "🌟 You're doing amazing! Stay strong!",
         "🎯 Perfect form! You're a natural!",
-        "⭐ Excellent work! Your posture is improving!"
+        '⭐ Excellent work! Your posture is improving!'
       ]
     };
     
@@ -267,7 +267,7 @@ class GamificationManager {
   }
 
   async endGameSession() {
-    if (!this.currentSession.isActive) return;
+    if (!this.currentSession.isActive) {return;}
 
     const sessionData = this.calculateSessionResults();
     
@@ -320,7 +320,7 @@ class GamificationManager {
   }
 
   processMetricsForGamification(metrics) {
-    if (!this.currentSession.isActive) return;
+    if (!this.currentSession.isActive) {return;}
 
     const score = metrics.postureScore || 0;
     this.currentSession.scores.push(score);
@@ -393,7 +393,7 @@ class GamificationManager {
     const newAchievements = [];
     
     for (const [id, achievement] of Object.entries(this.achievements)) {
-      if (this.playerStats.achievements.includes(id)) continue;
+      if (this.playerStats.achievements.includes(id)) {continue;}
       
       let unlocked = false;
       
@@ -418,10 +418,10 @@ class GamificationManager {
   }
 
   async unlockAchievement(achievementId) {
-    if (this.playerStats.achievements.includes(achievementId)) return;
+    if (this.playerStats.achievements.includes(achievementId)) {return;}
     
     const achievement = this.achievements[achievementId];
-    if (!achievement) return;
+    if (!achievement) {return;}
     
     this.playerStats.achievements.push(achievementId);
     this.currentSession.achievementsUnlocked.push(achievement);
@@ -475,7 +475,7 @@ class GamificationManager {
   }
 
   getExperienceToNextLevel() {
-    if (this.playerStats.level >= this.levelSystem.maxLevel) return 0;
+    if (this.playerStats.level >= this.levelSystem.maxLevel) {return 0;}
     
     let totalExpForCurrentLevel = 0;
     let expRequired = this.levelSystem.baseExp;
@@ -504,7 +504,7 @@ class GamificationManager {
     const expEl = document.getElementById('playerExp');
     const expBarEl = document.getElementById('expProgressBar');
     
-    if (levelEl) levelEl.textContent = this.playerStats.level;
+    if (levelEl) {levelEl.textContent = this.playerStats.level;}
     
     if (levelNameEl) {
       const levelName = this.levelSystem.levelNames[this.playerStats.level] || 'Practitioner';
@@ -540,16 +540,16 @@ class GamificationManager {
     const pointsEl = document.getElementById('totalPoints');
     const sessionPointsEl = document.getElementById('sessionPoints');
     
-    if (pointsEl) pointsEl.textContent = Math.floor(this.playerStats.totalPoints).toLocaleString();
-    if (sessionPointsEl) sessionPointsEl.textContent = Math.floor(this.currentSession.pointsEarned);
+    if (pointsEl) {pointsEl.textContent = Math.floor(this.playerStats.totalPoints).toLocaleString();}
+    if (sessionPointsEl) {sessionPointsEl.textContent = Math.floor(this.currentSession.pointsEarned);}
   }
 
   updateStreakDisplay() {
     const streakEl = document.getElementById('currentStreak');
     const bestStreakEl = document.getElementById('bestStreak');
     
-    if (streakEl) streakEl.textContent = `${this.playerStats.currentStreak} days`;
-    if (bestStreakEl) bestStreakEl.textContent = `${this.playerStats.bestStreak} days`;
+    if (streakEl) {streakEl.textContent = `${this.playerStats.currentStreak} days`;}
+    if (bestStreakEl) {bestStreakEl.textContent = `${this.playerStats.bestStreak} days`;}
   }
 
   updateProgressBars() {
@@ -572,7 +572,7 @@ class GamificationManager {
 
   updateAchievementsList() {
     const achievementsContainer = document.getElementById('achievementsList');
-    if (!achievementsContainer) return;
+    if (!achievementsContainer) {return;}
     
     achievementsContainer.innerHTML = '';
     
@@ -674,7 +674,6 @@ class GamificationManager {
     };
     
     // Create modal or update UI with session summary
-    console.log('Session Summary:', summary);
     
     // Could implement a modal here
     this.showFloatingNotification('🎯', 
@@ -728,7 +727,6 @@ class GamificationManager {
 
   performDailyReset() {
     // Reset daily goals, award daily badges, etc.
-    console.log('Performing daily reset...');
   }
 
   startTracking() {
