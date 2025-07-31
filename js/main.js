@@ -366,16 +366,9 @@ class ProPostureFitnessApp {
         
         try {
             
-            // Check authentication and start session
-            if (!this.apiService.isAuthenticated()) {
-                console.warn('⚠️ User not authenticated, starting session locally only');
-                // Start local session in metrics manager
-                if (this.metricsManager) {
-                    await this.metricsManager.startSession();
-                }
-            } else {
-                // Create new posture session (this will also sync with metrics manager)
-                await this.createPostureSession();
+            // Start local session (authentication bypassed)
+            if (this.metricsManager) {
+                await this.metricsManager.startSession();
             }
             
             // Initialize camera if not already done

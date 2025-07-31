@@ -16,12 +16,7 @@ class AuthManager {
     this.createAuthUI();
     this.setupEventListeners();
     
-    // Check if user is already authenticated
-    if (this.api.isAuthenticated()) {
-      this.loadUserProfile();
-    } else {
-      this.showAuthUI();
-    }
+    this.skipAuthentication();
   }
 
   createAuthUI() {
@@ -496,9 +491,8 @@ class AuthManager {
     localStorage.setItem('demo_mode', 'true');
     
     this.hideAuthUI();
-    this.showUserInfo();
     
-    // Trigger auth state change callback
+    // Trigger auth state change callback to proceed to dashboard
     if (this.onAuthStateChange) {
       this.onAuthStateChange(true, demoUser);
     }

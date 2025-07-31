@@ -8,7 +8,7 @@ class UIManager {
         this.elements = {};
         this.state = {
             isAnalyzing: false,
-            currentMode: 'advanced',
+            currentMode: 'basic',
             showPerformance: true,
             lastScore: null,
             sessionStartTime: null,

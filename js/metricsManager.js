@@ -1030,15 +1030,8 @@ class MetricsManager {
   async startSession() {
     try {
       // Create session in backend
-      const sessionData = {
-        sessionName: `Posture Session ${new Date().toLocaleString()}`,
-        sessionNotes: 'Live dashboard session'
-      };
-
-      if (this.api && this.api.isAuthenticated()) {
-        const response = await this.api.createPostureSession(sessionData);
-        this.sessionId = response.session.id;
-      }
+      // Skip authentication check - always use local session
+      this.sessionId = `local_${Date.now()}`;
 
       // Start local session
       this.isSessionActive = true;
@@ -1077,13 +1070,7 @@ class MetricsManager {
 
   async endSession() {
     try {
-      // End session in backend
-      if (this.sessionId && this.api && this.api.isAuthenticated()) {
-        await this.api.updatePostureSession(this.sessionId, {
-          endTime: new Date().toISOString(),
-          sessionNotes: 'Session completed via dashboard'
-        });
-      }
+      // Skip authentication check - local session only
 
       // End local session
       this.isSessionActive = false;
@@ -1179,22 +1166,9 @@ Alerts: ${summary.alertCount}
     };
   }
 
-  async sendMetricsToBackend(metrics) {
-    if (!this.api || !this.api.isAuthenticated() || !this.sessionId) {return;}
-
-    try {
-      await this.api.addPostureData({
-        sessionId: this.sessionId,
-        timestamp: new Date().toISOString(),
-        postureScore: metrics.postureScore,
-        headAngle: metrics.headTiltAngle,
-        shoulderAngle: metrics.shoulderSlope,
-        spineAngle: metrics.spineAlignment,
-        isGoodPosture: metrics.postureScore >= 70
-      });
-    } catch (error) {
-      console.error('Failed to send metrics to backend:', error);
-    }
+  async sendMetricsToBackend(_metrics) {
+    // Skip authentication check - local metrics only
+    return;
   }
 
   resetMetrics() {
