@@ -16,7 +16,8 @@ export default defineConfig({
     allowedHosts: [
       'full-stack-cleanup-app-tunnel-1o3vxmzu.devinapps.com',
       'fullstack-cleanup-app-tunnel-l43tst07.devinapps.com',
-      'full-stack-cleanup-app-tunnel-s2buqh5w.devinapps.com'
+      'full-stack-cleanup-app-tunnel-s2buqh5w.devinapps.com',
+      'fullstack-cleanup-app-tunnel-8ko1vnpb.devinapps.com'
     ],
     hmr: {
       overlay: true
